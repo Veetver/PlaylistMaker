@@ -1,6 +1,10 @@
 package com.example.playlistmaker
 
+import android.content.Intent
 import android.os.Bundle
+import android.view.View
+import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -15,6 +19,22 @@ class MainActivity : AppCompatActivity() {
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
+        }
+
+        val search = findViewById<Button>(R.id.search)
+        val library = findViewById<Button>(R.id.library)
+        val settings = findViewById<Button>(R.id.settings)
+
+        search.setOnClickListener {
+            startActivity(Intent(this, SearchActivity::class.java))
+        }
+
+        library.setOnClickListener {
+            startActivity(Intent(this, LibraryActivity::class.java))
+        }
+
+        settings.setOnClickListener {
+            startActivity(Intent(this, SettingsActivity::class.java))
         }
     }
 }
