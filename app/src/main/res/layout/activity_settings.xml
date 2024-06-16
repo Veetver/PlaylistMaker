@@ -6,6 +6,7 @@
     android:background="@color/settings_background"
     android:orientation="vertical">
 
+    <!--  TODO: androidx.appcompat.widget.Toolbar  -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,7 +32,7 @@
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
+        android:layout_height="@dimen/settings_item_64dp"
         android:paddingHorizontal="@dimen/default_padding_16dp"
         android:text="@string/dark_theme"
         android:textColor="@color/settings_text"
@@ -39,7 +40,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
+        android:layout_height="@dimen/settings_item_64dp"
         android:paddingHorizontal="@dimen/default_padding_16dp">
 
         <TextView
@@ -61,7 +62,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
+        android:layout_height="@dimen/settings_item_64dp"
         android:paddingHorizontal="@dimen/default_padding_16dp">
 
         <TextView
@@ -83,7 +84,7 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
+        android:layout_height="@dimen/settings_item_64dp"
         android:paddingHorizontal="@dimen/default_padding_16dp">
 
         <TextView

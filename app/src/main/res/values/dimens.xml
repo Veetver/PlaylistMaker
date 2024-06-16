@@ -2,7 +2,7 @@
 <resources>
     <dimen name="default_padding_16dp">16dp</dimen>
     <dimen name="default_margin_16dp">16dp</dimen>
-    <dimen name="settings_item_61dp">61dp</dimen>
+    <dimen name="settings_item_64dp">64dp</dimen>
     <dimen name="main_btn_weight">1</dimen>
     <dimen name="icon_padding_8dp">8dp</dimen>
     <dimen name="button_inset_0dp">0dp</dimen>
