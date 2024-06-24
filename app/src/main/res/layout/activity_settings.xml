@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/settings_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".SettingsActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
         style="@style/PlaylistMakerToolbarStyle"
         app:navigationIcon="@drawable/arrow_back"
-        app:title="@string/settings"/>
+        app:title="@string/settings" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_item_64dp"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingHorizontal="@dimen/default_padding_16dp"
         android:text="@string/dark_theme"
-        android:textColor="@color/settings_text"
+        android:textColor="@color/settings_item_text"
         android:textSize="@dimen/text_h2_16sp" />
 
-    <FrameLayout style="@style/PlayListMakerSettingItemContainer">
+    <FrameLayout
+        android:id="@+id/share_app_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
             style="@style/PlayListMakerSettingItemTextView"
@@ -28,10 +32,13 @@
 
         <ImageView
             style="@style/PlayListMakerSettingItemImageView"
-            android:src="@drawable/share_light_mode" />
+            android:contentDescription="@string/share"
+            android:src="@drawable/share" />
     </FrameLayout>
 
-    <FrameLayout style="@style/PlayListMakerSettingItemContainer">
+    <FrameLayout
+        android:id="@+id/support_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
             style="@style/PlayListMakerSettingItemTextView"
@@ -39,10 +46,13 @@
 
         <ImageView
             style="@style/PlayListMakerSettingItemImageView"
-            android:src="@drawable/support_light_mode"/>
+            android:contentDescription="@string/support"
+            android:src="@drawable/support" />
     </FrameLayout>
 
-    <FrameLayout style="@style/PlayListMakerSettingItemContainer">
+    <FrameLayout
+        android:id="@+id/eula_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
             style="@style/PlayListMakerSettingItemTextView"
@@ -50,7 +60,8 @@
 
         <ImageView
             style="@style/PlayListMakerSettingItemImageView"
-            android:src="@drawable/arrow_forward_light_mode" />
+            android:contentDescription="@string/eula"
+            android:src="@drawable/arrow_forward" />
     </FrameLayout>
 
 </LinearLayout>

@@ -1,9 +1,28 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="colorPrimary">@color/default_background</item>
+        <item name="colorOnPrimary">@color/default_title</item>
+
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:windowBackground">?attr/colorPrimary</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
+
+    <style name="Theme.PlaylistMaker.Main" parent="Theme.PlaylistMaker">
+        <item name="colorPrimary">@color/main_background</item>
+        <item name="colorOnPrimary">@color/main_title</item>
+        <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Search" parent="Theme.PlaylistMaker">
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+
+    <style name="Theme.PlaylistMaker.Library" parent="Theme.PlaylistMaker" />
+
+    <style name="Theme.PlaylistMaker.Settings" parent="Theme.PlaylistMaker">
+        <item name="switchStyle">@style/Theme.PlaylistMaker.Settings.SwitchCompat</item>
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
 </resources>
