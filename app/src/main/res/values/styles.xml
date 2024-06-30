@@ -33,7 +33,7 @@
         <item name="android:layout_marginHorizontal">@dimen/default_margin_16dp</item>
         <item name="android:layout_marginTop">@dimen/default_margin_16dp</item>
         <item name="android:layout_weight">@dimen/main_btn_weight</item>
-        <item name="android:backgroundTint">#FFFFFF</item>
+        <item name="android:backgroundTint">@color/main_btn_background</item>
         <item name="textAllCaps">false</item>
         <item name="fontFamily">@font/ys_display_medium</item>
         <item name="android:textFontWeight">500</item>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/settings_background"
     android:orientation="vertical"
     tools:context=".SettingsActivity">
 
@@ -14,6 +15,7 @@
         app:title="@string/settings" />
 
     <androidx.appcompat.widget.SwitchCompat
+        style="@style/Theme.PlaylistMaker.Settings.SwitchCompat"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_item_64dp"
         android:foreground="?attr/selectableItemBackground"
