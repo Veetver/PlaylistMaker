@@ -1,106 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/settings_background"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".SettingsActivity">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp">
-
-        <ImageView
-            android:id="@+id/back"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:padding="@dimen/default_padding_16dp"
-            android:src="@drawable/arrow_back"
-            app:tint="@color/settings_title" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:text="@string/settings"
-            android:textColor="@color/settings_title"
-            android:textSize="@dimen/text_h1_22sp" />
-    </LinearLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_settings"
+        style="@style/PlaylistMakerToolbarStyle"
+        app:navigationIcon="@drawable/arrow_back"
+        app:title="@string/settings" />
 
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
+        android:layout_height="@dimen/settings_item_64dp"
+        android:foreground="?attr/selectableItemBackground"
         android:paddingHorizontal="@dimen/default_padding_16dp"
         android:text="@string/dark_theme"
-        android:textColor="@color/settings_text"
+        android:textColor="@color/settings_item_text"
         android:textSize="@dimen/text_h2_16sp" />
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
-        android:paddingHorizontal="@dimen/default_padding_16dp">
+        android:id="@+id/share_app_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:gravity="center_vertical"
-            android:text="@string/share"
-            android:textColor="@color/settings_text"
-            android:textSize="@dimen/text_h2_16sp" />
+            style="@style/PlayListMakerSettingItemTextView"
+            android:text="@string/share" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:src="@drawable/share_light_mode"
-            app:tint="@color/settings_icons" />
+            style="@style/PlayListMakerSettingItemImageView"
+            android:contentDescription="@string/share"
+            android:src="@drawable/share" />
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
-        android:paddingHorizontal="@dimen/default_padding_16dp">
+        android:id="@+id/support_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:gravity="center_vertical"
-            android:text="@string/support"
-            android:textColor="@color/settings_text"
-            android:textSize="@dimen/text_h2_16sp" />
+            style="@style/PlayListMakerSettingItemTextView"
+            android:text="@string/support" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:src="@drawable/support_light_mode"
-            app:tint="@color/settings_icons" />
+            style="@style/PlayListMakerSettingItemImageView"
+            android:contentDescription="@string/support"
+            android:src="@drawable/support" />
     </FrameLayout>
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/settings_item_61dp"
-        android:paddingHorizontal="@dimen/default_padding_16dp">
+        android:id="@+id/eula_item_settings"
+        style="@style/PlayListMakerSettingItemContainer">
 
         <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:gravity="center_vertical"
-            android:text="@string/eula"
-            android:textColor="@color/settings_text"
-            android:textSize="@dimen/text_h2_16sp" />
+            style="@style/PlayListMakerSettingItemTextView"
+            android:text="@string/eula" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="end"
-            android:src="@drawable/arrow_forward_light_mode"
-            app:tint="@color/settings_icons" />
+            style="@style/PlayListMakerSettingItemImageView"
+            android:contentDescription="@string/eula"
+            android:src="@drawable/arrow_forward" />
     </FrameLayout>
 
 </LinearLayout>
