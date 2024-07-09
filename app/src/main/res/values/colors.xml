@@ -21,4 +21,7 @@
     <color name="edit_text_hint">#AEAFB4</color>
     <color name="edit_text_search_icon">#AEAFB4</color>
     <color name="edit_text_text">#1A1B22</color>
+
+    <color name="search_item_track_name">#000000</color>
+    <color name="search_item_details">#AEAFB4</color>
 </resources>

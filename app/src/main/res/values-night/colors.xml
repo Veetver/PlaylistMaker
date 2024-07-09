@@ -16,4 +16,7 @@
     <color name="edit_text_rounded_shape_background">#FFFFFFFF</color>
     <color name="edit_text_hint">#1A1B22</color>
     <color name="edit_text_search_icon">#1A1B22</color>
+
+    <color name="search_item_track_name">#FFFFFFFF</color>
+    <color name="search_item_details">#FFFFFFFF</color>
 </resources>
