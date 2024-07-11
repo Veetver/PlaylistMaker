@@ -73,10 +73,7 @@ class SearchActivity : AppCompatActivity() {
             "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
         ),
         Track(
-            "dafgadfhadl;fhma[dfhpomae[=fgiomadfg",
-            "edfg'sfdhplkmsfg[hpomsfpdfl,g",
-            "5:03",
-            ""
+            "dafgadfhadl;fhma[dfhpomae[=fgiomadfg", "edfg'sfdhplkmsfg[hpomsfpdfl,g", "5:03", ""
         ),
         Track(
             "Sweet Child O'Mine",
@@ -172,10 +169,7 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        findViewById<EditText>(R.id.search_edit_text).setText(
-            savedInstanceState.getString(
-                SEARCH_TEXT
-            ) ?: ""
-        )
+        findViewById<EditText>(R.id.search_edit_text)
+            .setText(savedInstanceState.getString(SEARCH_TEXT) ?: "")
     }
 }
