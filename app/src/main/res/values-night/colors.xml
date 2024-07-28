@@ -19,4 +19,9 @@
 
     <color name="search_item_track_name">#FFFFFFFF</color>
     <color name="search_item_details">#FFFFFFFF</color>
+    <color name="empty_search_placeholder">#FFFFFFFF</color>
+    <color name="error_search_placeholder">#FFFFFF</color>
+    <color name="search_placeholder_text">#FFFFFF</color>
+    <color name="search_retry_btn_tint">#FFFFFF</color>
+    <color name="search_retry_btn_text">#1A1B22</color>
 </resources>

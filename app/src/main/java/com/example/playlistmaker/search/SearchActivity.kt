@@ -2,9 +2,13 @@ package com.example.playlistmaker.search
 
 import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -15,117 +19,26 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.models.Track
+import com.example.playlistmaker.repository.TracksRepository
+import com.example.playlistmaker.repository.impl.ITunesApiDataSource
 import com.example.playlistmaker.search.rv.SearchAdapter
+
 
 class SearchActivity : AppCompatActivity() {
 
     companion object {
         const val SEARCH_TEXT = "SEARCH_TEXT"
+        const val SEARCH_RESULT_ERROR = "SEARCH_RESULT_ERROR"
+        const val SEARCH_RESULT = "SEARCH_RESULT"
     }
 
-    private val mockTrackList = listOf(
-        Track(
-            "Smells Like Teen Spirit",
-            "Nirvana",
-            "5:01",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music115/v4/7b/58/c2/7b58c21a-2b51-2bb2-e59a-9bb9b96ad8c3/00602567924166.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Billie Jean",
-            "Michael Jackson",
-            "4:35",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/3d/9d/38/3d9d3811-71f0-3a0e-1ada-3004e56ff852/827969428726.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Stayin' Alive",
-            "Bee Gees",
-            "4:10",
-            "https://is4-ssl.mzstatic.com/image/thumb/Music115/v4/1f/80/1f/1f801fc1-8c0f-ea3e-d3e5-387c6619619e/16UMGIM86640.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Sweet Child O'MineSweet Child O'MineSweet Child O'MineSweet Child O'MineSweet Child O'MineSweet Child O'Mine",
-            "Guns N' RosesGuns N' RosesGuns N' RosesGuns N' RosesGuns N' RosesGuns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "dafgadfhadl;fhma[dfhpomae[=fgiomadfg", "edfg'sfdhplkmsfg[hpomsfpdfl,g", "5:03", ""
-        ),
-        Track(
-            "Sweet Child O'Mine",
-            "Guns N' Roses",
-            "5:03",
-            "https://is5-ssl.mzstatic.com/image/thumb/Music125/v4/a0/4d/c4/a04dc484-03cc-02aa-fa82-5334fcb4bc16/18UMGIM24878.rgb.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Here Comes The Sun (Remastered edition)",
-            "The Beatles",
-            "4:01",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-        Track(
-            "Whole Lotta Love",
-            "Led Zeppelin",
-            "5:33",
-            "https://is2-ssl.mzstatic.com/image/thumb/Music62/v4/7e/17/e3/7e17e33f-2efa-2a36-e916-7f808576cf6b/mzm.fyigqcbs.jpg/100x100bb.jpg"
-        ),
-    )
+    private val tracksRepository = TracksRepository(ITunesApiDataSource())
 
     private var searchText = ""
+    private var searchResultError = false
+    private var tracks = ArrayList<Track>()
+
+    private val adapter = SearchAdapter(tracks)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -141,6 +54,7 @@ class SearchActivity : AppCompatActivity() {
         val clearTextBtn = findViewById<ImageView>(R.id.clear_text_btn)
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         val searchResult = findViewById<RecyclerView>(R.id.search_result)
+        val searchErrorBtn = findViewById<Button>(R.id.search_retry_btn)
 
         toolbar.setNavigationOnClickListener {
             this.finish()
@@ -148,6 +62,9 @@ class SearchActivity : AppCompatActivity() {
 
         clearTextBtn.setOnClickListener {
             searchEditText.text = null
+
+            this.tracks.clear()
+            adapter.notifyDataSetChanged()
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
@@ -159,17 +76,95 @@ class SearchActivity : AppCompatActivity() {
             searchText = searchEditText.text.toString()
         }
 
-        searchResult.adapter = SearchAdapter(mockTrackList)
+        searchEditText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                trackSearch(searchEditText.text.toString())
+                true
+            }
+            false
+        }
+
+        searchErrorBtn.setOnClickListener {
+            trackSearch(searchEditText.text.toString())
+        }
+
+        searchResult.adapter = adapter
+    }
+
+    private fun trackSearch(query: String) {
+        if (query.isNotEmpty()) {
+            tracksRepository.search(
+                text = query,
+                onSuccess = ::onSearchSuccess,
+                onFailure = ::onSearchFailure
+            )
+        } else {
+            this.tracks.clear()
+            adapter.notifyDataSetChanged()
+        }
+    }
+
+    private fun onSearchSuccess(tracks: List<Track>) {
+        this.tracks.clear()
+        this.tracks.addAll(tracks)
+        adapter.notifyDataSetChanged()
+
+        searchResultError = false
+        showSearchResult()
+    }
+
+    private fun onSearchFailure() {
+        this.tracks.clear()
+        adapter.notifyDataSetChanged()
+
+        searchResultError = true
+        showSearchResult()
+    }
+
+    private fun showSearchResult() {
+        val errLayoutView = findViewById<LinearLayout>(R.id.search_placeholder)
+        val errorImgView = findViewById<ImageView>(R.id.search_placeholder_img)
+        val errorTxtView = findViewById<TextView>(R.id.search_placeholder_text)
+        val errorBtnView = findViewById<Button>(R.id.search_retry_btn)
+        val searchResult = findViewById<RecyclerView>(R.id.search_result)
+
+        if (searchResultError) {
+            errLayoutView.isVisible = true
+            errorImgView.setImageResource(R.drawable.error_search_placeholder)
+            errorTxtView.text = getString(R.string.search_error)
+            errorBtnView.isVisible = true
+            searchResult.isVisible = false
+        } else if (this.tracks.isEmpty()) {
+            errLayoutView.isVisible = true
+            errorImgView.setImageResource(R.drawable.empty_search_placeholder)
+            errorTxtView.text = getString(R.string.search_empty)
+            errorBtnView.isVisible = false
+            searchResult.isVisible = false
+        } else {
+            errLayoutView.isVisible = false
+            searchResult.isVisible = true
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(SEARCH_TEXT, searchText)
+
+        // Временно, до бд
+        outState.putBoolean(SEARCH_RESULT_ERROR, searchResultError)
+        outState.putSerializable(SEARCH_RESULT, this.tracks)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        findViewById<EditText>(R.id.search_edit_text)
-            .setText(savedInstanceState.getString(SEARCH_TEXT) ?: "")
+        findViewById<EditText>(R.id.search_edit_text).setText(
+            savedInstanceState.getString(SEARCH_TEXT) ?: ""
+        )
+        this.searchResultError = savedInstanceState.getBoolean(SEARCH_RESULT_ERROR)
+
+        // Временно, до бд
+        this.tracks.clear()
+        this.tracks.addAll(savedInstanceState.getSerializable(SEARCH_RESULT) as ArrayList<Track>)
+        showSearchResult()
     }
 }
