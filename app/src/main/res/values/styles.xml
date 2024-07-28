@@ -96,4 +96,28 @@
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">11sp</item>
     </style>
+
+    <style name="PlayListMakerSearchEditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textCursorDrawable">@drawable/blue_text_cursor</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:background">@drawable/rounded_rectangle</item>
+        <item name="android:drawableStart">@drawable/search</item>
+        <item name="android:drawablePadding">8dp</item>
+        <item name="android:drawableTint">@color/edit_text_search_icon</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:hint">@string/search</item>
+        <item name="android:imeOptions">actionDone</item>
+        <item name="android:inputType">text</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">32dp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:textColor">@color/edit_text_text</item>
+        <item name="android:textColorHint">@color/edit_text_hint</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">@dimen/text_h2_16sp</item>
+    </style>
 </resources>

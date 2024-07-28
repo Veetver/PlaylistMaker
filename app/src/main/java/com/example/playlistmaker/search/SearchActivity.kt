@@ -7,7 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -122,7 +122,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showSearchResult() {
-        val errLayoutView = findViewById<LinearLayout>(R.id.search_placeholder)
+        val errLayoutView = findViewById<ScrollView>(R.id.search_placeholder)
         val errorImgView = findViewById<ImageView>(R.id.search_placeholder_img)
         val errorTxtView = findViewById<TextView>(R.id.search_placeholder_text)
         val errorBtnView = findViewById<Button>(R.id.search_retry_btn)
