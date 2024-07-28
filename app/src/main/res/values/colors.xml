@@ -24,4 +24,9 @@
 
     <color name="search_item_track_name">#000000</color>
     <color name="search_item_details">#AEAFB4</color>
+    <color name="empty_search_placeholder">#1A1B22</color>
+    <color name="error_search_placeholder">#1A1B22</color>
+    <color name="search_placeholder_text">#1A1B22</color>
+    <color name="search_retry_btn_tint">#1A1B22</color>
+    <color name="search_retry_btn_text">#FFFFFF</color>
 </resources>

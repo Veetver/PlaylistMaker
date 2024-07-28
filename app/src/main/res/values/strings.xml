@@ -13,4 +13,7 @@
     <string name="email_template">khabiev2012@yandex.ru</string>
     <string name="eula_link">https://yandex.ru/legal/practicum_offer/</string>
     <string name="clear_edit_text">Очистить поиск</string>
+    <string name="search_empty">Ничего не нашлось</string>
+    <string name="search_error">Проблемы со связью\n\nЗагрузка не удалась. Проверьте подключение к интернету</string>
+    <string name="search_retry_btn">Обновить</string>
 </resources>
