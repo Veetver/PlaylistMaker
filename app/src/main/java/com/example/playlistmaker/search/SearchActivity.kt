@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -16,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.models.Track
@@ -55,6 +57,7 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         val searchResult = findViewById<RecyclerView>(R.id.search_result)
         val searchErrorBtn = findViewById<Button>(R.id.search_retry_btn)
+        val searchHistoryContainer = findViewById<LinearLayout>(R.id.search_history_container)
 
         toolbar.setNavigationOnClickListener {
             this.finish()
@@ -76,12 +79,20 @@ class SearchActivity : AppCompatActivity() {
             searchText = searchEditText.text.toString()
         }
 
+        searchEditText.doOnTextChanged { text, start, before, count ->
+            searchHistoryContainer.isVisible = searchEditText.hasFocus() && text?.isEmpty() == true
+        }
+
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 trackSearch(searchEditText.text.toString())
                 true
             }
             false
+        }
+
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            searchHistoryContainer.isVisible = hasFocus && searchEditText.text.isEmpty()
         }
 
         searchErrorBtn.setOnClickListener {
