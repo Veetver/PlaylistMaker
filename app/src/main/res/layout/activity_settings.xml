@@ -14,10 +14,12 @@
         app:navigationIcon="@drawable/arrow_back"
         app:title="@string/settings" />
 
-    <androidx.appcompat.widget.SwitchCompat
-        style="@style/Theme.PlaylistMaker.Settings.SwitchCompat"
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/themeSwitcher"
+        style="@style/Theme.PlaylistMaker.Settings.SwitchMaterial"
         android:layout_width="match_parent"
         android:layout_height="@dimen/settings_item_64dp"
+        android:layout_gravity="start"
         android:foreground="?attr/selectableItemBackground"
         android:paddingHorizontal="@dimen/default_padding_16dp"
         android:text="@string/dark_theme"

@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,6 +17,13 @@ class SettingsActivity : AppCompatActivity() {
         val shareAppItemSettings = findViewById<FrameLayout>(R.id.share_app_item_settings)
         val supportItemSettings = findViewById<FrameLayout>(R.id.support_item_settings)
         val eulaItemSettings = findViewById<FrameLayout>(R.id.eula_item_settings)
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.themeSwitcher)
+
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+        }
 
         toolbar.setNavigationOnClickListener {
             this.finish()
