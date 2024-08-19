@@ -1,13 +1,14 @@
 package com.example.playlistmaker
 
 import android.app.Application
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
 
     companion object {
         const val SHARED_PREFS = "com.example.playlistmaker"
-        const val SHARED_PREFS_DARK_THEME = "dark_theme"
+        private const val SHARED_PREFS_DARK_THEME = "dark_theme"
     }
 
     var darkTheme = false
@@ -38,4 +39,6 @@ class App : Application() {
             .putBoolean(SHARED_PREFS_DARK_THEME, darkThemeEnabled)
             .apply()
     }
+
+    fun getSharedPrefs(): SharedPreferences = getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 }
