@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.PlaylistMaker.Settings.SwitchCompat" parent="Widget.AppCompat.CompoundButton.Switch">
+    <style name="Theme.PlaylistMaker.Settings.SwitchMaterial" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="thumbTint">@color/settings_item_switch_thumb</item>
         <item name="trackTint">@color/settings_item_switch_track</item>
     </style>

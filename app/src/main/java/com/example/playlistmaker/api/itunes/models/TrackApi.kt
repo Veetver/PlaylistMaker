@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 data class TrackApi(
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTimeMillis: Long,
@@ -13,6 +14,7 @@ data class TrackApi(
 
 fun TrackApi.toTrack(): Track {
     return Track(
+        trackId = this.trackId,
         trackName = this.trackName,
         artistName = this.artistName,
         trackTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(this.trackTimeMillis),

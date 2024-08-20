@@ -24,4 +24,6 @@
     <color name="search_placeholder_text">#FFFFFF</color>
     <color name="search_retry_btn_tint">#FFFFFF</color>
     <color name="search_retry_btn_text">#1A1B22</color>
+    <color name="search_clear_history_btn_tint">#FFFFFF</color>
+    <color name="search_clear_history_btn_text">#1A1B22</color>
 </resources>

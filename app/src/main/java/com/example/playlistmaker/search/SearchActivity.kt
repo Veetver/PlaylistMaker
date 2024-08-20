@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -16,20 +17,23 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.App
 import com.example.playlistmaker.R
 import com.example.playlistmaker.models.Track
 import com.example.playlistmaker.repository.TracksRepository
 import com.example.playlistmaker.repository.impl.ITunesApiDataSource
 import com.example.playlistmaker.search.rv.SearchAdapter
+import com.google.android.material.button.MaterialButton
 
 
 class SearchActivity : AppCompatActivity() {
 
     companion object {
-        const val SEARCH_TEXT = "SEARCH_TEXT"
-        const val SEARCH_RESULT_ERROR = "SEARCH_RESULT_ERROR"
-        const val SEARCH_RESULT = "SEARCH_RESULT"
+        private const val SEARCH_TEXT = "SEARCH_TEXT"
+        private const val SEARCH_RESULT_ERROR = "SEARCH_RESULT_ERROR"
+        private const val SEARCH_RESULT = "SEARCH_RESULT"
     }
 
     private val tracksRepository = TracksRepository(ITunesApiDataSource())
@@ -37,8 +41,10 @@ class SearchActivity : AppCompatActivity() {
     private var searchText = ""
     private var searchResultError = false
     private var tracks = ArrayList<Track>()
+    private var tracksHistory = ArrayList<Track>()
 
-    private val adapter = SearchAdapter(tracks)
+    private var adapter: SearchAdapter = SearchAdapter(tracks)
+    private var searchHistoryAdapter: SearchAdapter = SearchAdapter(tracksHistory)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +61,42 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         val searchResult = findViewById<RecyclerView>(R.id.search_result)
         val searchErrorBtn = findViewById<Button>(R.id.search_retry_btn)
+        val searchHistoryContainer = findViewById<LinearLayout>(R.id.search_history_container)
+        val searchHistoryRV = findViewById<RecyclerView>(R.id.search_history)
+        val searchPlaceholder = findViewById<ScrollView>(R.id.search_placeholder)
+        val clearHistoryBtn = findViewById<MaterialButton>(R.id.clear_history_btn)
+
+
+        val prefs = (applicationContext as App).getSharedPrefs()
+
+        val searchHistory = SearchHistory(prefs)
+
+        tracksHistory.clear()
+        tracksHistory.addAll(searchHistory.getSearchHistory())
+
+        adapter.setOnItemClickListener { pos, track ->
+            tracksHistory.add(0, track)
+            searchHistoryAdapter.notifyItemInserted(0)
+
+            if (tracksHistory.size > 10) {
+                tracksHistory.removeLast()
+                searchHistoryAdapter.notifyItemRemoved(10)
+            }
+
+            searchHistoryAdapter.notifyItemRangeChanged(0,10)
+
+            searchHistory.saveHistory(tracksHistory)
+        }
+
+        searchHistoryAdapter.setOnItemClickListener { pos, track ->
+            tracksHistory.removeAt(pos)
+            tracksHistory.add(0, track)
+            searchHistory.saveHistory(tracksHistory)
+
+            searchHistoryAdapter.notifyItemMoved(pos, 0)
+            searchHistoryAdapter.notifyItemRangeChanged(0, pos + 1)
+            searchHistoryRV.layoutManager?.scrollToPosition(0)
+        }
 
         toolbar.setNavigationOnClickListener {
             this.finish()
@@ -69,11 +111,17 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+
+            searchPlaceholder.isVisible = false
         }
 
         searchEditText.doAfterTextChanged {
             clearTextBtn.isVisible = !searchEditText.text.isNullOrEmpty()
             searchText = searchEditText.text.toString()
+        }
+
+        searchEditText.doOnTextChanged { text, start, before, count ->
+            searchHistoryContainer.isVisible = searchEditText.hasFocus() && text?.isEmpty() == true && tracksHistory.isNotEmpty()
         }
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -84,11 +132,23 @@ class SearchActivity : AppCompatActivity() {
             false
         }
 
+        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            searchHistoryContainer.isVisible = hasFocus && searchEditText.text.isEmpty() && tracksHistory.isNotEmpty()
+        }
+
         searchErrorBtn.setOnClickListener {
             trackSearch(searchEditText.text.toString())
         }
 
+        clearHistoryBtn.setOnClickListener {
+            searchHistory.clear()
+            tracksHistory.clear()
+            searchHistoryAdapter.notifyDataSetChanged()
+            searchHistoryContainer.isVisible = false
+        }
+
         searchResult.adapter = adapter
+        searchHistoryRV.adapter = searchHistoryAdapter
     }
 
     private fun trackSearch(query: String) {
@@ -122,7 +182,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showSearchResult() {
-        val errLayoutView = findViewById<LinearLayout>(R.id.search_placeholder)
+        val errLayoutView = findViewById<ScrollView>(R.id.search_placeholder)
         val errorImgView = findViewById<ImageView>(R.id.search_placeholder_img)
         val errorTxtView = findViewById<TextView>(R.id.search_placeholder_text)
         val errorBtnView = findViewById<Button>(R.id.search_retry_btn)

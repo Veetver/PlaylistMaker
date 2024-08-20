@@ -12,4 +12,5 @@
     <dimen name="text_view_rounded_shape_radius">8dp</dimen>
     <dimen name="artwork_item_search_rv_45dp">48dp</dimen>
     <dimen name="artwork_item_search_rv_padding_end_8dp">8dp</dimen>
+    <dimen name="btn_radius_54dp">54dp</dimen>
 </resources>
