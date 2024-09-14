@@ -18,4 +18,10 @@
     <string name="search_retry_btn">Обновить</string>
     <string name="search_history_title">Вы искали</string>
     <string name="search_history_clear">Очистить историю</string>
+    <string name="placeholder_track_time_progress">0:30</string>
+    <string name="track_time_title">Длительность</string>
+    <string name="collection_name_title">Альбом</string>
+    <string name="release_date_title">Год</string>
+    <string name="primary_genre_name_title">Жанр</string>
+    <string name="country_title">Страна</string>
 </resources>

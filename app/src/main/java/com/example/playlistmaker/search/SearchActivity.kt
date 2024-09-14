@@ -1,6 +1,7 @@
 package com.example.playlistmaker.search
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -20,12 +21,15 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.App
+import com.example.playlistmaker.PlayerActivity
+import com.example.playlistmaker.PlayerActivity.Companion.TRACK_EXTRA
 import com.example.playlistmaker.R
 import com.example.playlistmaker.models.Track
 import com.example.playlistmaker.repository.TracksRepository
 import com.example.playlistmaker.repository.impl.ITunesApiDataSource
 import com.example.playlistmaker.search.rv.SearchAdapter
 import com.google.android.material.button.MaterialButton
+import com.google.gson.Gson
 
 
 class SearchActivity : AppCompatActivity() {
@@ -83,9 +87,13 @@ class SearchActivity : AppCompatActivity() {
                 searchHistoryAdapter.notifyItemRemoved(10)
             }
 
-            searchHistoryAdapter.notifyItemRangeChanged(0,10)
+            searchHistoryAdapter.notifyItemRangeChanged(0, 10)
 
             searchHistory.saveHistory(tracksHistory)
+
+            val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra(TRACK_EXTRA, Gson().toJson(track))
+            startActivity(intent)
         }
 
         searchHistoryAdapter.setOnItemClickListener { pos, track ->
@@ -96,6 +104,10 @@ class SearchActivity : AppCompatActivity() {
             searchHistoryAdapter.notifyItemMoved(pos, 0)
             searchHistoryAdapter.notifyItemRangeChanged(0, pos + 1)
             searchHistoryRV.layoutManager?.scrollToPosition(0)
+
+            val intent = Intent(this, PlayerActivity::class.java)
+            intent.putExtra(TRACK_EXTRA, Gson().toJson(track))
+            startActivity(intent)
         }
 
         toolbar.setNavigationOnClickListener {
@@ -121,7 +133,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.doOnTextChanged { text, start, before, count ->
-            searchHistoryContainer.isVisible = searchEditText.hasFocus() && text?.isEmpty() == true && tracksHistory.isNotEmpty()
+            searchHistoryContainer.isVisible =
+                searchEditText.hasFocus() && text?.isEmpty() == true && tracksHistory.isNotEmpty()
         }
 
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -133,7 +146,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            searchHistoryContainer.isVisible = hasFocus && searchEditText.text.isEmpty() && tracksHistory.isNotEmpty()
+            searchHistoryContainer.isVisible =
+                hasFocus && searchEditText.text.isEmpty() && tracksHistory.isNotEmpty()
         }
 
         searchErrorBtn.setOnClickListener {

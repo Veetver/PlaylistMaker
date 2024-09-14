@@ -26,4 +26,10 @@
     <color name="search_retry_btn_text">#1A1B22</color>
     <color name="search_clear_history_btn_tint">#FFFFFF</color>
     <color name="search_clear_history_btn_text">#1A1B22</color>
+
+
+    <color name="player_background">#1A1B22</color>
+    <color name="text_player">#FFFFFF</color>
+    <color name="info_title_player">#AEAFB4</color>
+    <color name="main_icons_player">#FFFFFF</color>
 </resources>
