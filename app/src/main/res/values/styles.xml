@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="PlayListMaker.TextAppearance" parent="TextAppearance.AppCompat.Body1">
+        <item name="fontFamily">@font/ys_display_regular</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="PlayListMaker.Main" parent="Theme.PlaylistMaker">
+        <item name="android:windowBackground">@color/YP_Blue</item>
+    </style>
+
+
     <style name="PlayListMakerSettingItemContainer">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/settings_item_64dp</item>
