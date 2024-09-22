@@ -8,12 +8,13 @@ data class TrackApi(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
-    val trackTimeMillis: Long,
-    val artworkUrl100: String,
+    val trackTimeMillis: Long?,
+    val artworkUrl100: String?,
     val collectionName: String,
-    val releaseDate: String,
+    val releaseDate: String?,
     val primaryGenreName: String,
     val country: String,
+    val previewUrl: String?,
 )
 
 fun TrackApi.toTrack(): Track {
@@ -27,5 +28,6 @@ fun TrackApi.toTrack(): Track {
         releaseDate = this.releaseDate,
         primaryGenreName = this.primaryGenreName,
         country = this.country,
+        previewUrl = this.previewUrl,
     )
 }

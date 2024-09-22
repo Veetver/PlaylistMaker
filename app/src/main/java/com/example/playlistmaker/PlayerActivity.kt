@@ -1,6 +1,9 @@
 package com.example.playlistmaker
 
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.ImageView
 import android.widget.TableRow
 import android.widget.TextView
@@ -15,16 +18,47 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.models.Track
 import com.example.playlistmaker.utils.dpToPx
 import com.google.gson.Gson
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
     companion object {
         const val TRACK_EXTRA = "TRACK_EXTRA"
+
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
     }
+    private var mediaPlayer = MediaPlayer()
+    private var playerState = STATE_DEFAULT
 
     private var track: Track? = null
+
+    private var playerControl: ImageView? = null
+    private var trackTimeProgress: TextView? = null
+
+    private val handler = Handler(Looper.getMainLooper())
+    private val runnableTrackTimeProgress = object : Runnable {
+        override fun run() {
+            when(playerState) {
+                STATE_PLAYING -> {
+                    trackTimeProgress?.text = SimpleDateFormat("mm:ss", Locale.getDefault()).format(mediaPlayer.currentPosition)
+                    handler.postDelayed(this, 300)
+                }
+                STATE_PREPARED -> {
+                    handler.removeCallbacks(this)
+                    trackTimeProgress?.text = getString(R.string.track_time_progress_zero)
+                }
+                else -> {
+                    handler.removeCallbacks(this)
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +72,18 @@ class PlayerActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar_player).setNavigationOnClickListener {
             this.finish()
         }
-
         track = Gson().fromJson(intent.getStringExtra(TRACK_EXTRA), Track::class.java)
 
         initializeFields(track)
+        preparePlayer()
+
+        playerControl = findViewById(R.id.player_control)
+        trackTimeProgress = findViewById(R.id.track_time_progress)
+
+        playerControl?.setOnClickListener {
+            playbackControl()
+            handler.post(runnableTrackTimeProgress)
+        }
     }
 
     private fun initializeFields(track: Track?) {
@@ -56,7 +98,7 @@ class PlayerActivity : AppCompatActivity() {
 
         if (track != null) {
             Glide.with(cover.context)
-                .load(track.artworkUrl100.replaceAfterLast('/', "512x512bb.jpg"))
+                .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
                 .placeholder(R.drawable.cover_player_placeholder)
                 .centerCrop()
                 .transform(RoundedCorners(dpToPx(8f, cover.context)))
@@ -78,5 +120,53 @@ class PlayerActivity : AppCompatActivity() {
             primaryGenreName.text = track.primaryGenreName
             country.text = track.country
         }
+    }
+
+    private fun preparePlayer() {
+        mediaPlayer.setDataSource(track?.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playerControl?.isEnabled = true
+            playerState = STATE_PREPARED
+        }
+        mediaPlayer.setOnCompletionListener {
+            playerControl?.setImageResource(R.drawable.play)
+            playerState = STATE_PREPARED
+
+        }
+    }
+
+    private fun startPlayer() {
+        mediaPlayer.start()
+        playerControl?.setImageResource(R.drawable.pause)
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer() {
+        mediaPlayer.pause()
+        playerControl?.setImageResource(R.drawable.play)
+        playerState = STATE_PAUSED
+    }
+
+    private fun playbackControl() {
+        when(playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+            }
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(runnableTrackTimeProgress)
+        mediaPlayer.release()
     }
 }
