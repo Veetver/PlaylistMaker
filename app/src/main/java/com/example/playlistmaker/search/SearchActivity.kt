@@ -3,12 +3,14 @@ package com.example.playlistmaker.search
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.inputmethod.EditorInfo
+import android.os.Handler
+import android.os.Looper
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -38,7 +40,11 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_TEXT = "SEARCH_TEXT"
         private const val SEARCH_RESULT_ERROR = "SEARCH_RESULT_ERROR"
         private const val SEARCH_RESULT = "SEARCH_RESULT"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
+
+    private var isClickAllowed = true
 
     private val tracksRepository = TracksRepository(ITunesApiDataSource())
 
@@ -49,6 +55,17 @@ class SearchActivity : AppCompatActivity() {
 
     private var adapter: SearchAdapter = SearchAdapter(tracks)
     private var searchHistoryAdapter: SearchAdapter = SearchAdapter(tracksHistory)
+    
+    private var searchEditText: EditText? = null
+    private var searchProgress: ProgressBar? = null
+    private var searchResult: RecyclerView? = null
+
+    private val searchRunnable = Runnable {
+        setProgressVisibility(true)
+        trackSearch(searchEditText?.text.toString())
+    }
+
+    private var handler: Handler = Handler(Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +79,14 @@ class SearchActivity : AppCompatActivity() {
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar_search)
         val clearTextBtn = findViewById<ImageView>(R.id.clear_text_btn)
-        val searchEditText = findViewById<EditText>(R.id.search_edit_text)
-        val searchResult = findViewById<RecyclerView>(R.id.search_result)
+        searchEditText = findViewById(R.id.search_edit_text)
+        searchResult = findViewById(R.id.search_result)
         val searchErrorBtn = findViewById<Button>(R.id.search_retry_btn)
         val searchHistoryContainer = findViewById<LinearLayout>(R.id.search_history_container)
         val searchHistoryRV = findViewById<RecyclerView>(R.id.search_history)
         val searchPlaceholder = findViewById<ScrollView>(R.id.search_placeholder)
         val clearHistoryBtn = findViewById<MaterialButton>(R.id.clear_history_btn)
-
+        searchProgress = findViewById(R.id.search_progress)
 
         val prefs = (applicationContext as App).getSharedPrefs()
 
@@ -79,6 +96,8 @@ class SearchActivity : AppCompatActivity() {
         tracksHistory.addAll(searchHistory.getSearchHistory())
 
         adapter.setOnItemClickListener { pos, track ->
+            if (!clickDebounce()) return@setOnItemClickListener
+
             tracksHistory.add(0, track)
             searchHistoryAdapter.notifyItemInserted(0)
 
@@ -97,6 +116,8 @@ class SearchActivity : AppCompatActivity() {
         }
 
         searchHistoryAdapter.setOnItemClickListener { pos, track ->
+            if (!clickDebounce()) return@setOnItemClickListener
+
             tracksHistory.removeAt(pos)
             tracksHistory.add(0, track)
             searchHistory.saveHistory(tracksHistory)
@@ -115,43 +136,36 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearTextBtn.setOnClickListener {
-            searchEditText.text = null
+            searchEditText?.text = null
 
             this.tracks.clear()
             adapter.notifyDataSetChanged()
 
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(searchEditText?.windowToken, 0)
 
             searchPlaceholder.isVisible = false
         }
 
-        searchEditText.doAfterTextChanged {
-            clearTextBtn.isVisible = !searchEditText.text.isNullOrEmpty()
-            searchText = searchEditText.text.toString()
+        searchEditText?.doAfterTextChanged {
+            clearTextBtn.isVisible = !searchEditText?.text.isNullOrEmpty()
+            searchText = searchEditText?.text.toString()
         }
 
-        searchEditText.doOnTextChanged { text, start, before, count ->
+        searchEditText?.doOnTextChanged { text, start, before, count ->
             searchHistoryContainer.isVisible =
-                searchEditText.hasFocus() && text?.isEmpty() == true && tracksHistory.isNotEmpty()
+                searchEditText?.hasFocus() == true && text?.isEmpty() == true && tracksHistory.isNotEmpty()
+            searchDebounce()
         }
 
-        searchEditText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                trackSearch(searchEditText.text.toString())
-                true
-            }
-            false
-        }
-
-        searchEditText.setOnFocusChangeListener { _, hasFocus ->
+        searchEditText?.setOnFocusChangeListener { _, hasFocus ->
             searchHistoryContainer.isVisible =
-                hasFocus && searchEditText.text.isEmpty() && tracksHistory.isNotEmpty()
+                hasFocus && searchEditText?.text?.isEmpty() == true && tracksHistory.isNotEmpty()
         }
 
         searchErrorBtn.setOnClickListener {
-            trackSearch(searchEditText.text.toString())
+            trackSearch(searchEditText?.text.toString())
         }
 
         clearHistoryBtn.setOnClickListener {
@@ -161,7 +175,7 @@ class SearchActivity : AppCompatActivity() {
             searchHistoryContainer.isVisible = false
         }
 
-        searchResult.adapter = adapter
+        searchResult?.adapter = adapter
         searchHistoryRV.adapter = searchHistoryAdapter
     }
 
@@ -185,6 +199,8 @@ class SearchActivity : AppCompatActivity() {
 
         searchResultError = false
         showSearchResult()
+
+        setProgressVisibility(false)
     }
 
     private fun onSearchFailure() {
@@ -193,6 +209,8 @@ class SearchActivity : AppCompatActivity() {
 
         searchResultError = true
         showSearchResult()
+
+        setProgressVisibility(false)
     }
 
     private fun showSearchResult() {
@@ -218,6 +236,25 @@ class SearchActivity : AppCompatActivity() {
             errLayoutView.isVisible = false
             searchResult.isVisible = true
         }
+    }
+
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun setProgressVisibility(isVisible: Boolean) {
+        searchProgress?.isVisible = isVisible
+        searchResult?.isVisible = !isVisible
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
