@@ -7,10 +7,6 @@ import com.example.playlistmaker.domain.api.SettingsRepository
 import com.example.playlistmaker.domain.model.AppThemeMode
 
 class SettingsRepositoryImpl(context: Context) : SettingsRepository {
-    companion object {
-        const val SHARED_PREFS = "com.example.playlistmaker"
-        private const val SHARED_PREFS_DARK_THEME = "dark_theme"
-    }
 
     private val prefs = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
@@ -39,5 +35,10 @@ class SettingsRepositoryImpl(context: Context) : SettingsRepository {
     private fun saveTheme(mode: AppThemeMode): Boolean {
         prefs.edit().putBoolean(SHARED_PREFS_DARK_THEME, mode.value).apply()
         return true
+    }
+
+    companion object {
+        const val SHARED_PREFS = "com.example.playlistmaker"
+        private const val SHARED_PREFS_DARK_THEME = "dark_theme"
     }
 }

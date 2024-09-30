@@ -6,17 +6,12 @@ import com.example.playlistmaker.data.dto.TrackListDto
 import com.google.gson.Gson
 
 class SharedPrefsDataSource(context: Context) : LocalDataSource {
-    companion object {
-        private const val SEARCH_HISTORY = "SEARCH_HISTORY"
-    }
-
-    private val prefs = context.getSharedPreferences(SEARCH_HISTORY, Context.MODE_PRIVATE)
+    private val prefs = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
     private val gson = Gson()
 
     override fun getSearchHistory(): TrackListDto {
         val searchHistoryJson =
-            prefs.getString(SEARCH_HISTORY, null)
-                ?: return TrackListDto(emptyList())
+            prefs.getString(SEARCH_HISTORY, null) ?: return TrackListDto(emptyList())
         return gson.fromJson(searchHistoryJson, TrackListDto::class.java)
     }
 
@@ -28,5 +23,10 @@ class SharedPrefsDataSource(context: Context) : LocalDataSource {
     override fun clearSearchHistory(): Boolean {
         prefs.edit().clear().apply()
         return true
+    }
+
+    companion object {
+        const val SHARED_PREFS = "com.example.playlistmaker"
+        private const val SEARCH_HISTORY = "SEARCH_HISTORY"
     }
 }

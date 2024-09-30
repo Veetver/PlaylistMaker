@@ -6,18 +6,15 @@ import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import com.example.playlistmaker.Creator
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.AppThemeMode
-import com.example.playlistmaker.domain.usecase.GetAppThemeModeUseCase
-import com.example.playlistmaker.domain.usecase.SetAppThemeModeUseCase
 import com.google.android.material.switchmaterial.SwitchMaterial
 
 class SettingsActivity : AppCompatActivity() {
 
-    private val settingsRepository by lazy { Creator.provideSettingsRepository(applicationContext) }
-    private val setAppThemeModeUseCase by lazy { SetAppThemeModeUseCase(settingsRepository) }
-    private val getAppThemeModeUseCase by lazy { GetAppThemeModeUseCase(settingsRepository) }
+    private val setAppThemeModeUseCase by lazy { Creator.provideSetAppThemeModeUseCase() }
+    private val getAppThemeModeUseCase by lazy { Creator.provideGetAppThemeModeUseCase() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

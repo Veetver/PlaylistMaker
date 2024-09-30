@@ -19,26 +19,21 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.SearchResult
 import com.example.playlistmaker.domain.model.SearchTrackQuery
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.domain.model.TrackList
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.ui.player.PlayerActivity
 import com.example.playlistmaker.ui.player.PlayerActivity.Companion.TRACK_EXTRA
 import com.google.android.material.button.MaterialButton
-import com.google.gson.Gson
 
 
 class SearchActivity : AppCompatActivity() {
 
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
-    private val tracksInteractor by lazy { Creator.provideTracksInteractor(applicationContext) }
+    private val tracksInteractor by lazy { Creator.provideTracksInteractor() }
+    private val tracksHistoryInteractor by lazy { Creator.provideTrackHistoryInteractor() }
+    private val gson = Creator.provideGson()
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -58,7 +53,7 @@ class SearchActivity : AppCompatActivity() {
     private val errorTxtView: TextView by lazy { findViewById(R.id.search_placeholder_text) }
     private val errorBtnView: Button by lazy { findViewById(R.id.search_retry_btn) }
 
-    private val tracksHistory = mutableListOf<Track>()
+    private val tracksHistory: MutableList<Track> = tracksHistoryInteractor.getHistory().list.toMutableList()
     private val tracksList = mutableListOf<Track>()
 
     private var adapter: SearchAdapter = SearchAdapter(tracksList)
@@ -121,45 +116,39 @@ class SearchActivity : AppCompatActivity() {
         }
 
         clearHistoryBtn.setOnClickListener {
-            tracksInteractor.clearTrackHistory()
+            val itemCount = tracksHistory.count()
+            tracksHistoryInteractor.clearHistory()
             tracksHistory.clear()
-            searchHistoryAdapter.notifyDataSetChanged()
+            searchHistoryAdapter.notifyItemRangeRemoved(0, itemCount)
             searchHistoryContainer.isVisible = false
         }
 
         adapter.setOnItemClickListener { pos, track ->
             if (!clickDebounce()) return@setOnItemClickListener
 
-            tracksHistory.add(0, track)
+            tracksHistoryInteractor.addTrack(track)
             searchHistoryAdapter.notifyItemInserted(0)
-
-            if (tracksHistory.size > 10) {
-                tracksHistory.removeLast()
-                searchHistoryAdapter.notifyItemRemoved(10)
-            }
-
+            searchHistoryAdapter.notifyItemRemoved(10)
             searchHistoryAdapter.notifyItemRangeChanged(0, 10)
 
-            tracksInteractor.saveTrackHistory(TrackList(tracksHistory))
-
             val intent = Intent(this, PlayerActivity::class.java)
-            intent.putExtra(TRACK_EXTRA, Gson().toJson(track))
+            intent.putExtra(TRACK_EXTRA, gson.toJson(track))
             startActivity(intent)
         }
 
         searchHistoryAdapter.setOnItemClickListener { pos, track ->
             if (!clickDebounce()) return@setOnItemClickListener
 
-            tracksHistory.removeAt(pos)
-            tracksHistory.add(0, track)
-            tracksInteractor.saveTrackHistory(TrackList(tracksHistory))
+            tracksHistoryInteractor.addTrack(track)
+            tracksHistory.clear()
+            tracksHistory.addAll(tracksHistoryInteractor.getHistory().list)
 
             searchHistoryAdapter.notifyItemMoved(pos, 0)
             searchHistoryAdapter.notifyItemRangeChanged(0, pos + 1)
             searchHistoryRV.layoutManager?.scrollToPosition(0)
 
             val intent = Intent(this, PlayerActivity::class.java)
-            intent.putExtra(TRACK_EXTRA, Gson().toJson(track))
+            intent.putExtra(TRACK_EXTRA, gson.toJson(track))
             startActivity(intent)
         }
 
@@ -169,10 +158,6 @@ class SearchActivity : AppCompatActivity() {
 
         searchResult.adapter = adapter
         searchHistoryRV.adapter = searchHistoryAdapter
-
-        tracksInteractor.getTracksHistory { trackList ->
-            tracksHistory.addAll(trackList.list)
-        }
     }
 
     private fun searchDebounce() {
@@ -222,5 +207,10 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

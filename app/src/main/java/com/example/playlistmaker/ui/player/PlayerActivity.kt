@@ -1,6 +1,6 @@
 package com.example.playlistmaker.ui.player
 
-import android.media.MediaPlayer
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,21 +15,16 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.domain.model.PlayerState
 import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.presentation.mapper.dpToPx
-import com.google.gson.Gson
-import java.text.SimpleDateFormat
+import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.presentation.mapper.DpToPxConverter.dpToPx
+import com.example.playlistmaker.presentation.mapper.MillisToStringFormatter.millisToStringFormatter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
 
-    companion object {
-        const val TRACK_EXTRA = "TRACK_EXTRA"
-    }
-
-    private var mediaPlayer = MediaPlayer()
-    private var playerState = PlayerState.STATE_DEFAULT
+    private val playerInteractor = Creator.proidePlayerInterator()
+    private val gson = Creator.provideGson()
 
     private var track: Track? = null
 
@@ -37,28 +32,6 @@ class PlayerActivity : AppCompatActivity() {
     private var trackTimeProgress: TextView? = null
 
     private val handler = Handler(Looper.getMainLooper())
-    private val runnableTrackTimeProgress = object : Runnable {
-        override fun run() {
-            when (playerState) {
-                PlayerState.STATE_PLAYING -> {
-                    trackTimeProgress?.text = SimpleDateFormat(
-                        "mm:ss",
-                        Locale.getDefault()
-                    ).format(mediaPlayer.currentPosition)
-                    handler.postDelayed(this, 300)
-                }
-
-                PlayerState.STATE_PREPARED -> {
-                    handler.removeCallbacks(this)
-                    trackTimeProgress?.text = getString(R.string.track_time_progress_zero)
-                }
-
-                else -> {
-                    handler.removeCallbacks(this)
-                }
-            }
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,19 +40,31 @@ class PlayerActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar_player).setNavigationOnClickListener {
             this.finish()
         }
-
-        track = Gson().fromJson(intent.getStringExtra(TRACK_EXTRA), Track::class.java)
-
-        initializeFields(track)
-        preparePlayer()
-
         playerControl = findViewById(R.id.player_control)
         trackTimeProgress = findViewById(R.id.track_time_progress)
 
+        track = getTrackFromJson(intent)
+        initializeFields(track)
+
         playerControl?.setOnClickListener {
-            playbackControl()
-            handler.post(runnableTrackTimeProgress)
+            playerInteractor.playbackControl()
         }
+
+        playerInteractor.preparePlayer(track = track!!) { progress, state ->
+            handler.post {
+                when (state) {
+                    PlayerState.STATE_PLAYING -> playerControl?.setImageResource(R.drawable.pause)
+                    PlayerState.STATE_DEFAULT,
+                    PlayerState.STATE_PREPARED,
+                    PlayerState.STATE_PAUSED -> playerControl?.setImageResource(R.drawable.play)
+                }
+                trackTimeProgress?.text = millisToStringFormatter(progress)
+            }
+        }
+    }
+
+    private fun getTrackFromJson(intent: Intent): Track {
+        return gson.fromJson(intent.getStringExtra(TRACK_EXTRA), Track::class.java)
     }
 
     private fun initializeFields(track: Track?) {
@@ -95,10 +80,8 @@ class PlayerActivity : AppCompatActivity() {
         if (track != null) {
             Glide.with(cover.context)
                 .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
-                .placeholder(R.drawable.cover_player_placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(dpToPx(8f, cover.context)))
-                .into(cover)
+                .placeholder(R.drawable.cover_player_placeholder).centerCrop()
+                .transform(RoundedCorners(dpToPx(8f, cover.context))).into(cover)
 
             trackName.text = track.trackName
             artistName.text = track.artistName
@@ -118,58 +101,21 @@ class PlayerActivity : AppCompatActivity() {
         }
     }
 
-    private fun preparePlayer() {
-        mediaPlayer.setDataSource(track?.previewUrl)
-        mediaPlayer.prepareAsync()
-        mediaPlayer.setOnPreparedListener {
-            playerControl?.isEnabled = true
-            playerState = PlayerState.STATE_PREPARED
-        }
-        mediaPlayer.setOnCompletionListener {
-            playerControl?.setImageResource(R.drawable.play)
-            playerState = PlayerState.STATE_PREPARED
-
-        }
-    }
-
-    private fun startPlayer() {
-        mediaPlayer.start()
-        playerControl?.setImageResource(R.drawable.pause)
-        playerState = PlayerState.STATE_PLAYING
-    }
-
-    private fun pausePlayer() {
-        mediaPlayer.pause()
-        playerControl?.setImageResource(R.drawable.play)
-        playerState = PlayerState.STATE_PAUSED
-    }
-
-    private fun playbackControl() {
-        when (playerState) {
-            PlayerState.STATE_PLAYING -> {
-                pausePlayer()
-            }
-
-            PlayerState.STATE_PREPARED, PlayerState.STATE_PAUSED -> {
-                startPlayer()
-            }
-
-            else -> {}
-        }
-    }
-
     private fun setCollectionVisibility(isVisible: Boolean) {
         findViewById<Group>(R.id.collection_group).isVisible = isVisible
     }
 
     override fun onPause() {
         super.onPause()
-        pausePlayer()
+        playerInteractor.pause()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(runnableTrackTimeProgress)
-        mediaPlayer.release()
+        playerInteractor.stop()
+    }
+
+    companion object {
+        const val TRACK_EXTRA = "TRACK_EXTRA"
     }
 }
