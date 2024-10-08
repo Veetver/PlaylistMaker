@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/search_background"
     android:orientation="vertical"
-    tools:context=".search.SearchActivity">
+    tools:context=".ui.search.SearchActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_search"
@@ -130,6 +130,15 @@
             app:cornerRadius="@dimen/btn_radius_54dp"
             app:rippleColor="@color/search_clear_history_btn_text" />
     </LinearLayout>
+    
+    <ProgressBar
+        android:id="@+id/search_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="144dp"
+        android:visibility="gone"
+        android:indeterminateTint="@color/progress_bar_color"
+        />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/search_result"
