@@ -1,21 +1,18 @@
 <resources>
-    <style name="Base.Theme.PlaylistMaker" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/default_background</item>
-        <item name="colorOnPrimary">@color/default_title</item>
+    <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/YP_Black</item>
+        <item name="colorOnPrimary">@color/YP_White</item>
 
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowBackground">?attr/colorPrimary</item>
+        <item name="colorSecondary">@color/YP_White</item>
+        <item name="colorOnSecondary">@color/YP_Black</item>
+
+        <item name="android:windowBackground">@color/default_background</item>
+        <item name="android:textAppearance">@style/PlayListMaker.TextAppearance</item>
     </style>
-
-    <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 
     <style name="Theme.PlaylistMaker.Main" parent="Theme.PlaylistMaker" />
 
-    <style name="Theme.PlaylistMaker.Search" parent="Theme.PlaylistMaker" />
-
-    <style name="Theme.PlaylistMaker.Library" parent="Theme.PlaylistMaker" />
-
     <style name="Theme.PlaylistMaker.Settings" parent="Theme.PlaylistMaker">
-        <item name="switchStyle">@style/Theme.PlaylistMaker.Settings.SwitchMaterial</item>
+<!--        <item name="switchStyle">@style/Theme.PlaylistMaker.Settings.SwitchMaterial</item>-->
     </style>
 </resources>
