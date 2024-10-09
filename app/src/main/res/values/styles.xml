@@ -1,40 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="PlayListMaker.TextAppearance" parent="TextAppearance.AppCompat.Body1">
+    <style name="PlayListMaker.TextAppearance" parent="Base.TextAppearance.AppCompat">
         <item name="fontFamily">@font/ys_display_regular</item>
-        <item name="android:textFontWeight">400</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textFontWeight">500</item>
     </style>
 
-    <style name="PlayListMaker.Main" parent="Theme.PlaylistMaker">
-        <item name="android:windowBackground">@color/YP_Blue</item>
+    <style name="PlayListMaker.TextAppearance.Toolbar" parent="PlayListMaker.TextAppearance">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/text_h1_22sp</item>
+    </style>
+
+    <style name="PlayListMaker.TextAppearance.SettingsItem" parent="PlayListMaker.TextAppearance">
+        <item name="android:fontWeight">400</item>
     </style>
 
 
-    <style name="PlayListMakerSettingItemContainer">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/settings_item_64dp</item>
-        <item name="android:paddingHorizontal">@dimen/default_padding_16dp</item>
-        <item name="android:foreground">?attr/selectableItemBackground</item>
-    </style>
-
-    <style name="PlayListMakerSettingItemTextView">
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:textColor">@color/settings_item_text</item>
-        <item name="android:textSize">@dimen/text_h2_16sp</item>
-        <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:textFontWeight">400</item>
-        <item name="tint">@color/settings_item_icon</item>
-        <item name="android:layout_gravity">start</item>
-        <item name="android:gravity">center_vertical</item>
-    </style>
-
-    <style name="PlayListMakerSettingItemImageView">
+    <style name="PlayListMakerSearchActivityButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
+        <item name="android:layout_height">36dp</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">match_parent</item>
-        <item name="android:layout_gravity">end</item>
-        <item name="tint">@color/settings_item_icon</item>
+        <item name="textAllCaps">false</item>
+        <item name="cornerRadius">54sp</item>
+        <item name="rippleColor">?attr/colorOnSecondary</item>
+        <item name="android:layout_gravity">center_horizontal</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+        <item name="backgroundTint">?attr/colorSecondary</item>
+        <item name="android:layout_marginTop">24dp</item>
+        <item name="android:insetBottom">@dimen/button_inset_0dp</item>
+        <item name="android:insetTop">@dimen/button_inset_0dp</item>
+        <item name="android:textAppearance">
+            @style/PlayListMaker.TextAppearance.SearchActivityButton
+        </item>
+    </style>
+
+    <style name="PlayListMaker.TextAppearance.SearchActivityButton" parent="PlayListMaker.TextAppearance">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">14sp</item>
     </style>
 
     <style name="PlaylistMakerMainButton" parent="Widget.MaterialComponents.Button.UnelevatedButton">
@@ -43,68 +46,28 @@
         <item name="android:layout_marginHorizontal">@dimen/default_margin_16dp</item>
         <item name="android:layout_marginTop">@dimen/default_margin_16dp</item>
         <item name="android:layout_weight">@dimen/main_btn_weight</item>
-        <item name="android:backgroundTint">@color/main_btn_background</item>
+        <item name="android:backgroundTint">@color/YP_White</item>
         <item name="textAllCaps">false</item>
-        <item name="fontFamily">@font/ys_display_medium</item>
-        <item name="android:textFontWeight">500</item>
-        <item name="android:textSize">@dimen/text_h1_22sp</item>
         <item name="android:letterSpacing">0</item>
-        <item name="android:textColor">@color/main_btn_text</item>
         <item name="iconTint">@color/main_btn_icon</item>
         <item name="iconPadding">@dimen/icon_padding_8dp</item>
         <item name="iconGravity">textStart</item>
+        <item name="android:textColor">@color/YP_Black</item>
         <item name="cornerRadius">@dimen/button_radius_16dp</item>
         <item name="android:insetBottom">@dimen/button_inset_0dp</item>
         <item name="android:insetTop">@dimen/button_inset_0dp</item>
-        <item name="rippleColor">@color/main_btn_text</item>
+        <item name="android:textAppearance">@style/PlayListMaker.TextAppearance.Button</item>
     </style>
+
+    <style name="PlayListMaker.TextAppearance.Button" parent="PlayListMaker.TextAppearance">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/text_h1_22sp</item>
+    </style>
+
 
     <style name="Theme.PlaylistMaker.Settings.SwitchMaterial" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="thumbTint">@color/settings_item_switch_thumb</item>
         <item name="trackTint">@color/settings_item_switch_track</item>
-    </style>
-
-    <style name="PlaylistMakerToolbarStyle">
-        <item name="android:theme">@style/PlaylistMakerToolbarTheme</item>
-        <item name="titleTextAppearance">@style/PlaylistMakerTitleTextAppearance</item>
-        <item name="contentInsetStartWithNavigation">0dp</item>
-        <item name="titleMarginStart">8dp</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="PlaylistMakerToolbarTheme">
-        <item name="toolbarNavigationButtonStyle">@style/PlaylistMakerNavigationButton</item>
-    </style>
-
-    <style name="PlaylistMakerTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
-        <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textSize">@dimen/text_h1_22sp</item>
-    </style>
-
-    <style name="PlaylistMakerNavigationButton" parent="Widget.AppCompat.Toolbar.Button.Navigation">
-        <item name="tint">@color/default_title</item>
-    </style>
-
-    <style name="track_name_item_rv">
-        <item name="android:textColor">@color/search_item_track_name</item>
-        <item name="android:textFontWeight">400</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-    </style>
-
-    <style name="details_item_rv">
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:ellipsize">end</item>
-        <item name="android:fontFamily">@font/ys_display_regular</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:textColor">@color/search_item_details</item>
-        <item name="android:textFontWeight">400</item>
-        <item name="android:textSize">11sp</item>
     </style>
 
     <style name="PlayListMakerSearchEditText" parent="Widget.AppCompat.EditText">
@@ -128,5 +91,71 @@
         <item name="android:textColorHint">@color/edit_text_hint</item>
         <item name="android:textFontWeight">400</item>
         <item name="android:textSize">@dimen/text_h2_16sp</item>
+    </style>
+
+
+    <style name="PlaylistMakerToolbarStyle">
+        <item name="android:theme">@style/PlaylistMakerToolbarTheme</item>
+        <item name="titleTextAppearance">@style/PlayListMaker.TextAppearance.Toolbar</item>
+        <item name="contentInsetStartWithNavigation">0dp</item>
+        <item name="titleMarginStart">8dp</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PlaylistMakerToolbarTheme">
+        <item name="toolbarNavigationButtonStyle">@style/PlaylistMakerToolbarNavigationButtonStyle
+        </item>
+    </style>
+
+    <style name="PlaylistMakerToolbarNavigationButtonStyle" parent="Widget.AppCompat.Toolbar.Button.Navigation">
+        <item name="tint">@color/default_title</item>
+    </style>
+
+
+    <style name="PlaylistMakerRecyclerItemTrackName">
+        <item name="android:textColor">@color/search_item_track_name</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="PlaylistMakerRecyclerItemTrackDetails">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:fontFamily">@font/ys_display_regular</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:textColor">@color/search_item_details</item>
+        <item name="android:textFontWeight">400</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
+    <style name="PlayListMakerSettingItemContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/settings_item_64dp</item>
+        <item name="android:paddingHorizontal">@dimen/default_padding_16dp</item>
+        <item name="android:foreground">?attr/selectableItemBackground</item>
+
+    </style>
+
+    <style name="PlayListMakerSettingItemTextView">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:textColor">@color/settings_item_text</item>
+        <item name="tint">@color/settings_item_icon</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:textAppearance">@style/PlayListMaker.TextAppearance.SettingsItem</item>
+    </style>
+
+    <style name="PlayListMakerSettingItemImageView">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">end</item>
+        <item name="tint">@color/settings_item_icon</item>
     </style>
 </resources>

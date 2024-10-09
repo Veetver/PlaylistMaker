@@ -2,24 +2,18 @@
 
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/YP_White</item>
-        <item name="colorPrimaryDark">@color/YP_White</item>
         <item name="colorOnPrimary">@color/YP_Black</item>
 
         <item name="colorSecondary">@color/YP_Black</item>
         <item name="colorOnSecondary">@color/YP_White</item>
 
-        <item name="android:windowBackground">@color/YP_White</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowLightStatusBar">true</item>
-
+        <item name="android:windowBackground">@color/default_background</item>
         <item name="android:textAppearance">@style/PlayListMaker.TextAppearance</item>
     </style>
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 
     <style name="Theme.PlaylistMaker.Main" parent="Theme.PlaylistMaker">
-        <item name="colorPrimaryDark">@color/YP_Blue</item>
         <item name="android:windowBackground">@color/YP_Blue</item>
-        <item name="android:windowLightStatusBar">false</item>
     </style>
 </resources>
