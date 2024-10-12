@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.library
+package com.example.playlistmaker.library.ui
 
 import android.graphics.Color
 import android.os.Bundle

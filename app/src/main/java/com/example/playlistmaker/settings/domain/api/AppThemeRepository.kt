@@ -1,8 +1,8 @@
-package com.example.playlistmaker.domain.api
+package com.example.playlistmaker.settings.domain.api
 
 import com.example.playlistmaker.domain.model.AppThemeMode
 
-interface SettingsRepository {
+interface AppThemeRepository {
     fun getSavedTheme(): AppThemeMode
     fun changeTheme(mode: AppThemeMode): Boolean
 }

@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.search.ui
 
 import android.content.Context
 import android.content.Intent
@@ -29,8 +29,8 @@ import com.example.playlistmaker.domain.model.SearchResult
 import com.example.playlistmaker.domain.model.SearchTrackQuery
 import com.example.playlistmaker.domain.model.Track
 import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.ui.player.PlayerActivity
-import com.example.playlistmaker.ui.player.PlayerActivity.Companion.TRACK_EXTRA
+import com.example.playlistmaker.player.ui.PlayerActivity
+import com.example.playlistmaker.player.ui.PlayerActivity.Companion.TRACK_EXTRA
 import com.google.android.material.button.MaterialButton
 
 

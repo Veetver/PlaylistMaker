@@ -1,12 +1,12 @@
 package com.example.playlistmaker.domain.usecase
 
-import com.example.playlistmaker.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.AppThemeRepository
 import com.example.playlistmaker.domain.model.AppThemeMode
 
 class SetAppThemeModeUseCase(
-    private val settingsRepository: SettingsRepository
+    private val appThemeRepository: AppThemeRepository
 ) {
-    fun execute(mode: AppThemeMode) {
-        settingsRepository.changeTheme(mode)
+    fun execute(mode: AppThemeMode): Boolean {
+        return appThemeRepository.changeTheme(mode)
     }
 }

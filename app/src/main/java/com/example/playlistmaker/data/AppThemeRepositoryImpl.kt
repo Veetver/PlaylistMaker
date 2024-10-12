@@ -3,10 +3,10 @@ package com.example.playlistmaker.data
 import android.app.Application.MODE_PRIVATE
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlistmaker.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.AppThemeRepository
 import com.example.playlistmaker.domain.model.AppThemeMode
 
-class SettingsRepositoryImpl(context: Context) : SettingsRepository {
+class AppThemeRepositoryImpl(context: Context) : AppThemeRepository {
 
     private val prefs = context.getSharedPreferences(SHARED_PREFS, MODE_PRIVATE)
 
