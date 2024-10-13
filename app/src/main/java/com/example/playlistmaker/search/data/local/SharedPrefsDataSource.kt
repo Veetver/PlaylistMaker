@@ -21,7 +21,7 @@ class SharedPrefsDataSource(context: Context) : LocalDataSource {
     }
 
     override fun clearSearchHistory(): Boolean {
-        prefs.edit().clear().apply()
+        prefs.edit().remove(SEARCH_HISTORY).apply()
         return true
     }
 
