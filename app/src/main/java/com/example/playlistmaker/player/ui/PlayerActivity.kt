@@ -1,130 +1,122 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
-import androidx.constraintlayout.widget.Group
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.model.PlayerState
-import com.example.playlistmaker.domain.model.Track
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.presentation.mapper.DpToPxConverter.dpToPx
-import com.example.playlistmaker.presentation.mapper.MillisToStringFormatter.millisToStringFormatter
+import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.util.mapper.DpToPxConverter.dpToPx
+import com.example.playlistmaker.player.presentation.mapper.MillisToStringFormatter.millisToStringFormatter
+import com.example.playlistmaker.player.presentation.state.PlayerScreenState
+import com.example.playlistmaker.player.presentation.viewmodel.PlayerViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class PlayerActivity : AppCompatActivity() {
 
-    private val playerInteractor = Creator.proidePlayerInterator()
-    private val gson = Creator.provideGson()
-
-    private var track: Track? = null
-
-    private var playerControl: ImageView? = null
-    private var trackTimeProgress: TextView? = null
-
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var viewModel: PlayerViewModel
+    private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_player)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.activity_player)) { v, insets ->
+
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
 
-        findViewById<Toolbar>(R.id.toolbar_player).setNavigationOnClickListener {
+        viewModel = ViewModelProvider(
+            this,
+            PlayerViewModel.getViewModelFactory(intent.getStringExtra(TRACK_EXTRA) ?: "")
+        ).get(PlayerViewModel::class.java)
+
+        binding.toolbarPlayer.setNavigationOnClickListener {
             this.finish()
         }
-        playerControl = findViewById(R.id.player_control)
-        trackTimeProgress = findViewById(R.id.track_time_progress)
 
-        track = getTrackFromJson(intent)
-        initializeFields(track)
-
-        playerControl?.setOnClickListener {
-            playerInteractor.playbackControl()
+        binding.playerControl.setOnClickListener {
+            viewModel.playbackControl()
         }
 
-        playerInteractor.preparePlayer(track = track!!) { progress, state ->
-            handler.post {
-                when (state) {
-                    PlayerState.STATE_PLAYING -> playerControl?.setImageResource(R.drawable.pause)
-                    PlayerState.STATE_DEFAULT,
-                    PlayerState.STATE_PREPARED,
-                    PlayerState.STATE_PAUSED -> playerControl?.setImageResource(R.drawable.play)
-                }
-                trackTimeProgress?.text = millisToStringFormatter(progress)
+        viewModel.trackLiveData.observe(this) { track ->
+            initializeFields(track)
+        }
+
+        viewModel.playerScreenStateLiveData.observe(this) { state ->
+            changeControlButton(state)
+        }
+
+        viewModel.playerProgressLiveData.observe(this) { progress ->
+            binding.trackTimeProgress.text = millisToStringFormatter(progress)
+        }
+    }
+
+    private fun changeControlButton(state: PlayerScreenState) {
+        when (state) {
+            is PlayerScreenState.Playing -> {
+                binding.playerControl.setImageResource(R.drawable.pause)
+            }
+
+            is PlayerScreenState.Waiting -> {
+                binding.playerControl.setImageResource(R.drawable.play)
             }
         }
     }
 
-    private fun getTrackFromJson(intent: Intent): Track {
-        return gson.fromJson(intent.getStringExtra(TRACK_EXTRA), Track::class.java)
-    }
+    private fun initializeFields(track: Track) {
+        Glide.with(binding.coverPlaceholder.context)
+            .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
+            .placeholder(R.drawable.cover_player_placeholder).centerCrop()
+            .transform(RoundedCorners(dpToPx(8f, binding.coverPlaceholder.context)))
+            .into(binding.coverPlaceholder)
 
-    private fun initializeFields(track: Track?) {
-        val cover = findViewById<ImageView>(R.id.cover_placeholder)
-        val trackName = findViewById<TextView>(R.id.track_name)
-        val artistName = findViewById<TextView>(R.id.artist_name)
-        val trackTime = findViewById<TextView>(R.id.track_time)
-        val collectionName = findViewById<TextView>(R.id.collection_name)
-        val releaseDate = findViewById<TextView>(R.id.release_date)
-        val primaryGenreName = findViewById<TextView>(R.id.primary_genre_name)
-        val country = findViewById<TextView>(R.id.country)
+        binding.trackName.text = track.trackName
+        binding.artistName.text = track.artistName
+        binding.trackTime.text = track.trackTime
 
-        if (track != null) {
-            Glide.with(cover.context)
-                .load(track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg"))
-                .placeholder(R.drawable.cover_player_placeholder).centerCrop()
-                .transform(RoundedCorners(dpToPx(8f, cover.context))).into(cover)
-
-            trackName.text = track.trackName
-            artistName.text = track.artistName
-            trackTime.text = track.trackTime
-
-            if (track.collectionName.isEmpty()) {
-                setCollectionVisibility(false)
-            } else {
-                setCollectionVisibility(true)
-                collectionName.text = track.collectionName
-            }
-
-            releaseDate.text =
-                LocalDate.parse(track.releaseDate, DateTimeFormatter.ISO_DATE_TIME).year.toString()
-            primaryGenreName.text = track.primaryGenreName
-            country.text = track.country
+        if (track.collectionName.isEmpty()) {
+            setCollectionVisibility(false)
+        } else {
+            setCollectionVisibility(true)
+            binding.collectionName.text = track.collectionName
         }
+
+        binding.releaseDate.text =
+            LocalDate.parse(track.releaseDate, DateTimeFormatter.ISO_DATE_TIME).year.toString()
+        binding.primaryGenreName.text = track.primaryGenreName
+        binding.country.text = track.country
     }
 
     private fun setCollectionVisibility(isVisible: Boolean) {
-        findViewById<Group>(R.id.collection_group).isVisible = isVisible
+        binding.collectionGroup.isVisible = isVisible
     }
 
     override fun onPause() {
         super.onPause()
-        playerInteractor.pause()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        playerInteractor.stop()
+        viewModel.playerPause()
     }
 
     companion object {
         const val TRACK_EXTRA = "TRACK_EXTRA"
+
+        fun show(context: Context, trackJson: String) {
+            val intent = Intent(context, PlayerActivity::class.java)
+            intent.putExtra(TRACK_EXTRA, trackJson)
+            context.startActivity(intent)
+        }
     }
 }

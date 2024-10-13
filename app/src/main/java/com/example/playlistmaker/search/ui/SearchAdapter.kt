@@ -4,12 +4,19 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.domain.model.Track
+import com.example.playlistmaker.search.domain.model.TrackList
+import com.example.playlistmaker.search.domain.model.Track
 
-class SearchAdapter(private val trackList: List<Track>) :
+class SearchAdapter() :
     RecyclerView.Adapter<SearchViewHolder>() {
 
+    private var trackList: List<Track> = emptyList()
     private var onItemClickListener: (Int, Track) -> Unit = { i: Int, track: Track -> }
+
+    fun setTrackList(list: TrackList) {
+        trackList = list.list
+        notifyDataSetChanged()
+    }
 
     fun setOnItemClickListener(onItemClickListener: (Int, Track) -> Unit) {
         this.onItemClickListener = onItemClickListener

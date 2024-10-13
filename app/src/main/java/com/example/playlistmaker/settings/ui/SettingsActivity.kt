@@ -9,6 +9,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.ViewModelProvider
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
+import com.example.playlistmaker.settings.presentation.viewmodel.SettingsViewModel
 
 class SettingsActivity : AppCompatActivity() {
 

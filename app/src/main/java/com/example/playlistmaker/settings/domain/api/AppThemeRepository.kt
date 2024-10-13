@@ -1,6 +1,6 @@
 package com.example.playlistmaker.settings.domain.api
 
-import com.example.playlistmaker.domain.model.AppThemeMode
+import com.example.playlistmaker.settings.domain.model.AppThemeMode
 
 interface AppThemeRepository {
     fun getSavedTheme(): AppThemeMode
