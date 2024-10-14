@@ -92,6 +92,10 @@ class SearchViewModel(
     fun onItemClick(track: Track) {
         tracksHistoryInteractor.addTrack(track)
         _showTrackTrigger.postValue(gson.toJson(track))
+
+        if (searchScreenState.value is SearchScreenState.HistoryContent) {
+            _searchScreenState.postValue(SearchScreenState.HistoryContent(tracksHistoryInteractor.getHistory()))
+        }
     }
 
 
