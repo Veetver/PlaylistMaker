@@ -23,7 +23,7 @@
 
         <TextView
             android:id="@+id/track_name"
-            style="@style/track_name_item_rv"
+            style="@style/PlaylistMakerRecyclerItemTrackName"
             tools:text="Yesterday (Remastered 2009)" />
 
         <LinearLayout
@@ -33,7 +33,7 @@
 
             <TextView
                 android:id="@+id/artist_name"
-                style="@style/details_item_rv"
+                style="@style/PlaylistMakerRecyclerItemTrackDetails"
                 android:layout_width="56dp"
                 tools:text="The Beatles" />
 
@@ -45,7 +45,7 @@
 
             <TextView
                 android:id="@+id/track_time"
-                style="@style/details_item_rv"
+                style="@style/PlaylistMakerRecyclerItemTrackDetails"
                 android:layout_width="wrap_content"
                 tools:text="2:55" />
         </LinearLayout>
