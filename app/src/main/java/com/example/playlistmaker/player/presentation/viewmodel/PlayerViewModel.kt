@@ -3,17 +3,13 @@ package com.example.playlistmaker.player.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
 
 class PlayerViewModel(
-    private val track: Track,
+    track: Track,
     private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
@@ -57,19 +53,5 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         playerInteractor.stop()
-    }
-
-    companion object {
-        fun getViewModelFactory(jsonTrack: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val gson = Creator.provideGson()
-                val playerInteractor = Creator.proidePlayerInterator()
-
-                PlayerViewModel(
-                    track = gson.fromJson(jsonTrack, Track::class.java),
-                    playerInteractor = playerInteractor,
-                )
-            }
-        }
     }
 }

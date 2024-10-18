@@ -1,29 +1,24 @@
 package com.example.playlistmaker
 
 import android.app.Application
-import android.content.Context
-import com.example.playlistmaker.creator.Creator
+import com.example.playlistmaker.di.appModule
+import com.example.playlistmaker.settings.domain.usecase.GetAppThemeModeUseCase
+import com.example.playlistmaker.settings.domain.usecase.SetAppThemeModeUseCase
+import org.koin.android.ext.android.inject
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.GlobalContext.startKoin
 
 class App : Application() {
-
-    init {
-        instance = this
-    }
-
-    private val setAppThemeModeUseCase by lazy { Creator.provideSetAppThemeModeUseCase() }
-    private val getAppThemeModeUseCase by lazy { Creator.provideGetAppThemeModeUseCase() }
-
-    var context: Context? = null
+    private val setAppThemeModeUseCase: SetAppThemeModeUseCase by inject()
+    private val getAppThemeModeUseCase: GetAppThemeModeUseCase by inject()
 
     override fun onCreate() {
         super.onCreate()
-        context = applicationContext
 
+        startKoin {
+            androidContext(this@App)
+            modules(appModule)
+        }
         setAppThemeModeUseCase.execute(getAppThemeModeUseCase.execute())
-    }
-
-    companion object {
-        lateinit var instance: Application
-            private set
     }
 }
