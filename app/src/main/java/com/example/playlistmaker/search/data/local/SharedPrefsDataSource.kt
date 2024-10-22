@@ -5,9 +5,11 @@ import com.example.playlistmaker.search.data.LocalDataSource
 import com.example.playlistmaker.search.data.dto.TrackListDto
 import com.google.gson.Gson
 
-class SharedPrefsDataSource(context: Context) : LocalDataSource {
+class SharedPrefsDataSource(
+    context: Context,
+    private val gson: Gson
+) : LocalDataSource {
     private val prefs = context.getSharedPreferences(SHARED_PREFS, Context.MODE_PRIVATE)
-    private val gson = Gson()
 
     override fun getSearchHistory(): TrackListDto {
         val searchHistoryJson =

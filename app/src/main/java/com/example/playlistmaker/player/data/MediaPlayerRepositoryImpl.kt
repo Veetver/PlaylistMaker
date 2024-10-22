@@ -5,43 +5,47 @@ import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 
-class PlayerRepositoryImpl : PlayerRepository {
 
-    private val player = MediaPlayer()
+class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRepository {
     private var playerState = PlayerState.STATE_DEFAULT
 
-    override fun preparePlayer(track: Track) {
-        player.setDataSource(track.previewUrl)
-        player.prepareAsync()
-        player.setOnPreparedListener {
-            playerState = PlayerState.STATE_PREPARED
-        }
-        player.setOnCompletionListener {
-            playerState = PlayerState.STATE_PREPARED
+    override fun preparePlayer(track: Track): Boolean {
+        if (track.previewUrl.isNullOrEmpty()) return false
 
+        mediaPlayer.setDataSource(track.previewUrl)
+        mediaPlayer.prepareAsync()
+        mediaPlayer.setOnPreparedListener {
+            playerState = PlayerState.STATE_PREPARED
         }
+        mediaPlayer.setOnCompletionListener {
+            playerState = PlayerState.STATE_PREPARED
+        }
+
+        return true
     }
 
     override fun startPlayer() {
-        player.start()
+        if(playerState == PlayerState.STATE_DEFAULT) return
+
+        mediaPlayer.start()
         playerState = PlayerState.STATE_PLAYING
     }
 
     override fun pausePlayer() {
         if (getCurrentState() != PlayerState.STATE_PLAYING) return
 
-        player.pause()
+        mediaPlayer.pause()
         playerState = PlayerState.STATE_PAUSED
 
     }
 
     override fun releasePlayer() {
-        player.release()
+        mediaPlayer.release()
         playerState = PlayerState.STATE_DEFAULT
     }
 
     override fun getCurrentPosition(): Int {
-        return player.currentPosition
+        return mediaPlayer.currentPosition
     }
 
     override fun getCurrentState(): PlayerState {

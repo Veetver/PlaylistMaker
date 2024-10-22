@@ -4,17 +4,21 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.domain.mapper.TrackMapper
 import com.example.playlistmaker.player.domain.model.PlayerState
-import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.player.presentation.model.TrackUI
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
+import com.example.playlistmaker.player.presentation.mapper.TrackMapper as TrackMapperUI
 
 class PlayerViewModel(
-    track: Track,
+    jsonTrack: String,
     private val playerInteractor: PlayerInteractor
 ) : ViewModel() {
 
-    private val _trackLiveData = MutableLiveData(track)
-    val trackLiveData: LiveData<Track> = _trackLiveData
+    private val track = TrackMapper.toTrack(jsonTrack)
+
+    private val _trackLiveData = MutableLiveData(TrackMapperUI.toTrackUI(track))
+    val trackLiveData: LiveData<TrackUI> = _trackLiveData
 
     private val _playerScreenStateLiveData: MutableLiveData<PlayerScreenState> =
         MutableLiveData(PlayerScreenState.Waiting)

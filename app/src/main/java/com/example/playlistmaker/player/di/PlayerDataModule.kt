@@ -1,11 +1,18 @@
 package com.example.playlistmaker.player.di
 
-import com.example.playlistmaker.player.data.PlayerRepositoryImpl
+import android.media.MediaPlayer
+import com.example.playlistmaker.player.data.MediaPlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import org.koin.dsl.module
 
 val playerDataModule = module {
-    single<PlayerRepository> {
-        PlayerRepositoryImpl()
+    factory<MediaPlayer> {
+        MediaPlayer()
+    }
+
+    factory<PlayerRepository> {
+        MediaPlayerRepositoryImpl(
+            mediaPlayer = get()
+        )
     }
 }

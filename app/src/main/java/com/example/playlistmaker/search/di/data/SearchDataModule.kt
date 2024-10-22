@@ -1,4 +1,4 @@
-package com.example.playlistmaker.search.di
+package com.example.playlistmaker.search.di.data
 
 import com.example.playlistmaker.search.data.LocalDataSource
 import com.example.playlistmaker.search.data.RemoteDataSource
@@ -9,14 +9,19 @@ import com.example.playlistmaker.search.domain.api.TracksRepository
 import org.koin.dsl.module
 
 val searchDataModule = module {
+    includes(searchNetworkModule)
+
     single<LocalDataSource> {
         SharedPrefsDataSource(
             context = get(),
+            gson = get(),
         )
     }
 
     single<RemoteDataSource> {
-        RetrofitDataSource()
+        RetrofitDataSource(
+            apiService = get()
+        )
     }
 
     single<TracksRepository> {
