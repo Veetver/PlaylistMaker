@@ -6,6 +6,10 @@ import org.koin.dsl.module
 
 val playerPresentationModule = module {
     viewModel { (jsonTrack: String) ->
-        PlayerViewModel(jsonTrack, get())
+        PlayerViewModel(
+            jsonTrack = jsonTrack,
+            gson = get(),
+            playerInteractor = get(),
+        )
     }
 }
