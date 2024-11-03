@@ -4,7 +4,7 @@ import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.search.domain.model.Track
 
 interface PlayerRepository {
-    fun preparePlayer(track: Track)
+    fun preparePlayer(track: Track): Boolean
     fun startPlayer()
     fun pausePlayer()
     fun releasePlayer()

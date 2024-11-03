@@ -12,8 +12,8 @@ class PlayerInteractorImpl(
     private val lock = Any()
 
     override fun preparePlayer(track: Track, consumer: PlayerInteractor.PlayerProgressConsumer) {
-        playerRepository.preparePlayer(track)
-        startLooper(consumer)
+        val prepareStarted = playerRepository.preparePlayer(track)
+        if (prepareStarted) startLooper(consumer)
     }
 
     override fun playbackControl() {

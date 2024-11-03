@@ -3,10 +3,6 @@ package com.example.playlistmaker.settings.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.settings.domain.model.AppThemeMode
 import com.example.playlistmaker.settings.domain.usecase.GetAppThemeModeUseCase
 import com.example.playlistmaker.settings.domain.usecase.SetAppThemeModeUseCase
@@ -45,25 +41,5 @@ class SettingsViewModel(
 
     fun openEula() {
         openEulaUseCase.execute()
-    }
-
-    companion object {
-        fun getViewModelFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val getAppThemeModeUseCase = Creator.provideGetAppThemeModeUseCase()
-                val setAppThemeModelUseCase = Creator.provideSetAppThemeModeUseCase()
-                val shareAppUseCase = Creator.provideShareAppUseCase()
-                val contactSupportUseCase = Creator.provideContactSupportUseCase()
-                val openEulaUseCase = Creator.provideOpenEulaUseCase()
-
-                SettingsViewModel(
-                    getAppThemeModeUseCase,
-                    setAppThemeModelUseCase,
-                    shareAppUseCase,
-                    contactSupportUseCase,
-                    openEulaUseCase
-                )
-            }
-        }
     }
 }

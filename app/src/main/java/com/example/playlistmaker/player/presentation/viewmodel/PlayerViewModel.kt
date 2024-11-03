@@ -3,22 +3,24 @@ package com.example.playlistmaker.player.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
-import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.player.presentation.model.TrackUI
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
+import com.example.playlistmaker.search.domain.model.Track
+import com.google.gson.Gson
+import com.example.playlistmaker.player.presentation.mapper.TrackMapper as TrackMapperUI
 
 class PlayerViewModel(
-    private val track: Track,
-    private val playerInteractor: PlayerInteractor
+    jsonTrack: String,
+    gson: Gson,
+    private val playerInteractor: PlayerInteractor,
 ) : ViewModel() {
 
-    private val _trackLiveData = MutableLiveData(track)
-    val trackLiveData: LiveData<Track> = _trackLiveData
+    private val track = gson.fromJson(jsonTrack, Track::class.java)
+
+    private val _trackLiveData = MutableLiveData(TrackMapperUI.toTrackUI(track))
+    val trackLiveData: LiveData<TrackUI> = _trackLiveData
 
     private val _playerScreenStateLiveData: MutableLiveData<PlayerScreenState> =
         MutableLiveData(PlayerScreenState.Waiting)
@@ -57,19 +59,5 @@ class PlayerViewModel(
     override fun onCleared() {
         super.onCleared()
         playerInteractor.stop()
-    }
-
-    companion object {
-        fun getViewModelFactory(jsonTrack: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val gson = Creator.provideGson()
-                val playerInteractor = Creator.proidePlayerInterator()
-
-                PlayerViewModel(
-                    track = gson.fromJson(jsonTrack, Track::class.java),
-                    playerInteractor = playerInteractor,
-                )
-            }
-        }
     }
 }
