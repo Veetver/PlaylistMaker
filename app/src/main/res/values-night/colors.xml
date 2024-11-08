@@ -5,13 +5,10 @@
 
     <color name="main_background">#1A1B22</color>
 
-    <color name="settings_background">#1A1B22</color>
     <color name="settings_item_text">#FFFFFFFF</color>
     <color name="settings_item_icon">#FFFFFFFF</color>
     <color name="settings_item_switch_thumb">#3772E7</color>
     <color name="settings_item_switch_track">#9FBBF3</color>
-
-    <color name="search_background">#1A1B22</color>
 
     <color name="edit_text_rounded_shape_background">#FFFFFFFF</color>
     <color name="edit_text_hint">#1A1B22</color>
@@ -21,15 +18,18 @@
     <color name="search_item_details">#FFFFFFFF</color>
     <color name="empty_search_placeholder">#FFFFFFFF</color>
     <color name="error_search_placeholder">#FFFFFF</color>
-    <color name="search_placeholder_text">#FFFFFF</color>
+    <color name="placeholder_text">#FFFFFF</color>
     <color name="search_retry_btn_tint">#FFFFFF</color>
     <color name="search_retry_btn_text">#1A1B22</color>
     <color name="search_clear_history_btn_tint">#FFFFFF</color>
     <color name="search_clear_history_btn_text">#1A1B22</color>
 
 
-    <color name="player_background">#1A1B22</color>
     <color name="text_player">#FFFFFF</color>
     <color name="info_title_player">#AEAFB4</color>
     <color name="main_icons_player">#FFFFFF</color>
+
+
+    <color name="libraryTabTextColor">@color/YP_White</color>
+    <color name="libraryTabIndicatorColor">@color/YP_White</color>
 </resources>
