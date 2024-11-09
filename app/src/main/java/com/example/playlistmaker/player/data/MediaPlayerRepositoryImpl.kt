@@ -19,6 +19,7 @@ class MediaPlayerRepositoryImpl(private val mediaPlayer: MediaPlayer) : PlayerRe
         }
         mediaPlayer.setOnCompletionListener {
             playerState = PlayerState.STATE_PREPARED
+            mediaPlayer.seekTo(0)
         }
 
         return true

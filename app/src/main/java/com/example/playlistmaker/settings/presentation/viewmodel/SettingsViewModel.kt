@@ -18,17 +18,18 @@ class SettingsViewModel(
     private val openEulaUseCase: OpenEulaUseCase,
 ) : ViewModel() {
 
-    private val _appThemeModeLiveData: MutableLiveData<AppThemeMode> =
-        MutableLiveData(getAppThemeModeUseCase.execute())
+    private val _appThemeModeLiveData: MutableLiveData<AppThemeMode> = MutableLiveData(getAppThemeModeUseCase.execute())
     val appThemeModeLiveData: LiveData<AppThemeMode> = _appThemeModeLiveData
 
     fun changeTheme(darkMode: Boolean) {
+        if (_appThemeModeLiveData.value?.value == darkMode) return
+
         val mode = when (darkMode) {
             true -> AppThemeMode.DarkMode
             false -> AppThemeMode.LightMode
         }
         val success = setAppThemeModelUseCase.execute(mode)
-        if (success) _appThemeModeLiveData.postValue(mode)
+        if (success) _appThemeModeLiveData.value = mode
     }
 
     fun shareApp() {

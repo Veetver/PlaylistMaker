@@ -5,7 +5,6 @@
     android:id="@+id/activity_search"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/search_background"
     android:orientation="vertical"
     tools:context=".search.ui.SearchActivity">
 
@@ -73,7 +72,7 @@
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/search_retry_btn"
-                style="@style/PlayListMakerSearchActivityButton"
+                style="@style/PlaylistMaker.Button.UnelevatedButton.RoundedCorner"
                 android:text="@string/search_retry_btn" />
 
         </LinearLayout>
@@ -109,7 +108,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/clear_history_btn"
-            style="@style/PlayListMakerSearchActivityButton"
+            style="@style/PlaylistMaker.Button.UnelevatedButton.RoundedCorner"
             android:text="@string/search_history_clear" />
     </LinearLayout>
 

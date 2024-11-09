@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.library.di.libraryPresentationModule
 import com.example.playlistmaker.player.di.playerDataModule
 import com.example.playlistmaker.player.di.playerDomainModule
 import com.example.playlistmaker.player.di.playerPresentationModule
@@ -26,6 +27,9 @@ val appModule = module {
 
     // ShareFeature
     includes(shareDataModule, shareDomainModule)
+
+    // LibraryFeature
+    includes(libraryPresentationModule)
 
     single {
         Gson()

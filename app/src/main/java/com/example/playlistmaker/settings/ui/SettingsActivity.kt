@@ -33,11 +33,11 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         viewModel.appThemeModeLiveData.observe(this) { mode ->
+            binding.themeSwitcher.setOnCheckedChangeListener(null)
             binding.themeSwitcher.isChecked = mode.value
-        }
-
-        binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
-            viewModel.changeTheme(checked)
+            binding.themeSwitcher.setOnCheckedChangeListener { _, checked ->
+                viewModel.changeTheme(checked)
+            }
         }
 
         binding.toolbarSettings.setNavigationOnClickListener { this.finish() }
