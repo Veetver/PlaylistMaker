@@ -39,8 +39,12 @@ class PlayerViewModel(
                     _playerProgressLiveData.postValue(progress)
                 }
 
+                PlayerState.STATE_PREPARED -> {
+                    _playerProgressLiveData.postValue(progress)
+                    _playerScreenStateLiveData.postValue(PlayerScreenState.Waiting)
+                }
+
                 PlayerState.STATE_DEFAULT,
-                PlayerState.STATE_PREPARED,
                 PlayerState.STATE_PAUSED -> {
                     _playerScreenStateLiveData.postValue(PlayerScreenState.Waiting)
                 }
