@@ -6,12 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".settings.ui.SettingsActivity">
+    tools:context=".settings.ui.SettingsFragment">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar_settings"
         style="@style/PlaylistMakerToolbarStyle"
-        app:navigationIcon="@drawable/arrow_back"
         app:title="@string/settings" />
 
     <com.google.android.material.switchmaterial.SwitchMaterial

@@ -1,19 +1,17 @@
 package com.example.playlistmaker.search.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.SystemBarStyle
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
@@ -21,32 +19,26 @@ import com.example.playlistmaker.search.presentation.viewmodel.SearchViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
 
     private val viewModel: SearchViewModel by viewModel()
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
     private var searchAdapter: SearchAdapter = SearchAdapter()
     private var searchHistoryAdapter: SearchAdapter = SearchAdapter()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge(
-            navigationBarStyle = SystemBarStyle.auto(
-                Color.TRANSPARENT,
-                Color.TRANSPARENT
-            ) { true },
-        )
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        viewModel.searchScreenState.observe(this) { state ->
+        viewModel.searchScreenState.observe(viewLifecycleOwner) { state ->
             render(state)
         }
 
@@ -55,13 +47,11 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.searchEditText.doOnTextChanged { text, _, _, _ ->
-            viewModel.searchQueryChanged(
-                SearchTrackQuery(text.toString())
-            )
+            viewModel.searchQueryChanged(SearchTrackQuery(text.toString()))
         }
 
-        binding.searchEditText.setOnFocusChangeListener { _, _ ->
-            viewModel.searchQueryChanged()
+        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.searchEditText.text.isNullOrEmpty()) viewModel.showHistory()
         }
 
         binding.searchRetryBtn.setOnClickListener {
@@ -72,7 +62,7 @@ class SearchActivity : AppCompatActivity() {
             binding.searchEditText.text = null
 
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
         }
 
@@ -80,19 +70,21 @@ class SearchActivity : AppCompatActivity() {
             viewModel.clearHistory()
         }
 
-        viewModel.showTrackTrigger.observe(this) { trackJson ->
+        viewModel.showTrackTrigger.observe(viewLifecycleOwner) { trackJson ->
             openTrack(trackJson)
         }
 
         searchAdapter.setOnItemClickListener { _, track -> viewModel.onItemClick(track) }
         searchHistoryAdapter.setOnItemClickListener { _, track -> viewModel.onItemClick(track) }
 
-        binding.toolbarSearch.setNavigationOnClickListener {
-            this.finish()
-        }
 
         binding.searchResult.adapter = searchAdapter
         binding.searchHistory.adapter = searchHistoryAdapter
+    }
+
+    override fun onDestroyView() {
+        _binding = null
+        super.onDestroyView()
     }
 
     private fun render(state: SearchScreenState) {
@@ -163,6 +155,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openTrack(trackJson: String) {
-        PlayerActivity.show(this, trackJson)
+        PlayerActivity.show(requireContext(), trackJson)
     }
 }
