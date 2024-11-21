@@ -8,11 +8,6 @@
 
         <item name="android:windowBackground">@color/default_background</item>
         <item name="android:textAppearance">@style/PlayListMaker.TextAppearance</item>
-    </style>
-
-    <style name="Theme.PlaylistMaker.Main" parent="Theme.PlaylistMaker" />
-
-    <style name="Theme.PlaylistMaker.Settings" parent="Theme.PlaylistMaker">
-<!--        <item name="switchStyle">@style/Theme.PlaylistMaker.Settings.SwitchMaterial</item>-->
+        <item name="bottomNavigationStyle">@style/PlaylistMaker.BottomNavView</item>
     </style>
 </resources>

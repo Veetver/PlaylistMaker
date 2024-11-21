@@ -43,5 +43,6 @@
     <color name="libraryTabTextColor">@color/YP_Black</color>
     <color name="libraryTabIndicatorColor">@color/YP_Black</color>
     <color name="placeholder_text">@color/YP_Black</color>
+    <color name="bottom_nav_divider">#E6E8EB</color>
 
 </resources>

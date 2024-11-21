@@ -40,6 +40,8 @@ class SearchViewModel(
     }
 
     fun searchQueryChanged(new: SearchTrackQuery? = null) {
+        if ((lastSearchQuery.value?.query ?: "") == new?.query) return
+
         lastSearchQuery.value = new
         handler.removeCallbacksAndMessages(runnableToken)
         if (new != null && new.query.isNotEmpty()) {
@@ -53,7 +55,7 @@ class SearchViewModel(
         }
     }
 
-    private fun showHistory() {
+    fun showHistory() {
         val historyList = tracksHistoryInteractor.getHistory()
         if (historyList.list.isNotEmpty()) {
             _searchScreenState.value = SearchScreenState.HistoryContent(historyList)

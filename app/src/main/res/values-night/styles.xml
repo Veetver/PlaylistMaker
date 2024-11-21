@@ -1,7 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="Theme.PlaylistMaker.Settings.SwitchMaterial" parent="Widget.AppCompat.CompoundButton.Switch">
         <item name="thumbTint">@color/settings_item_switch_thumb</item>
         <item name="trackTint">@color/settings_item_switch_track</item>
     </style>
+
+    <style name="PlaylistMaker.BottomNavView" parent="Widget.MaterialComponents.BottomNavigationView.Colored">
+        <item name="itemIconTint">@color/bottom_nav_icon_color_selector</item>
+        <item name="itemTextColor">@color/bottom_nav_icon_color_selector</item>
+        <item name="itemRippleColor">@color/YP_Blue</item>
+        <item name="itemTextAppearanceActiveBoldEnabled">false</item>
+        <item name="itemTextAppearanceActive">@style/PlaylistMaker.BottomNavView.Active</item>
+        <item name="itemTextAppearanceInactive">@style/PlaylistMaker.BottomNavView.Inactive</item>
+    </style>
+
+    <style name="PlaylistMaker.BottomNavView.Active" parent="PlayListMaker.TextAppearance">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textFontWeight">400</item>
+    </style>
+
+    <style name="PlaylistMaker.BottomNavView.Inactive" parent="PlaylistMaker.BottomNavView.Active" />
 </resources>
