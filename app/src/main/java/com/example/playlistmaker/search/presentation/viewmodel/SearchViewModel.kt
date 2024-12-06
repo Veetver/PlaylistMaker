@@ -34,6 +34,8 @@ class SearchViewModel(
 
     private var searchJob: Job? = null
 
+    private var isClickAllowed = true
+
     fun retrySearch() {
         val searchQuery = lastSearchQuery.value
         if (searchQuery != null) {
@@ -89,6 +91,8 @@ class SearchViewModel(
     }
 
     fun onItemClick(track: Track) {
+        if (!clickDebounce()) return
+
         tracksHistoryInteractor.addTrack(track)
         _showTrackTrigger.postValue(gson.toJson(track))
 
@@ -97,8 +101,22 @@ class SearchViewModel(
         }
     }
 
+    private fun clickDebounce(): Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            viewModelScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
+
+        }
+        return current
+    }
+
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
