@@ -36,8 +36,9 @@ android {
 }
 
 dependencies {
-    implementation (libs.koin.android)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
+    implementation (libs.koin.android)
     implementation(libs.retrofit)
     implementation(libs.converter.gson)
     implementation(libs.glide)

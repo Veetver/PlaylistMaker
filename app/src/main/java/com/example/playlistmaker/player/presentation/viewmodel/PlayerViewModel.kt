@@ -3,12 +3,19 @@ package com.example.playlistmaker.player.presentation.viewmodel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.presentation.model.TrackUI
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
 import com.example.playlistmaker.search.domain.model.Track
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import com.example.playlistmaker.player.presentation.mapper.TrackMapper as TrackMapperUI
 
 class PlayerViewModel(
@@ -22,38 +29,28 @@ class PlayerViewModel(
     private val _trackLiveData = MutableLiveData(TrackMapperUI.toTrackUI(track))
     val trackLiveData: LiveData<TrackUI> = _trackLiveData
 
-    private val _playerScreenStateLiveData: MutableLiveData<PlayerScreenState> =
-        MutableLiveData(PlayerScreenState.Waiting)
-    val playerScreenStateLiveData: LiveData<PlayerScreenState> = _playerScreenStateLiveData
-
-    private val _playerProgressLiveData: MutableLiveData<Int> = MutableLiveData(0)
-    val playerProgressLiveData: LiveData<Int> = _playerProgressLiveData
-
-    init {
-        playerInteractor.preparePlayer(track = track) { progress, state ->
-            when (state) {
-                PlayerState.STATE_PLAYING -> {
-                    if (playerScreenStateLiveData.value != PlayerScreenState.Playing) {
-                        _playerScreenStateLiveData.postValue(PlayerScreenState.Playing)
-                    }
-                    _playerProgressLiveData.postValue(progress)
-                }
-
-                PlayerState.STATE_PREPARED -> {
-                    _playerProgressLiveData.postValue(progress)
-                    _playerScreenStateLiveData.postValue(PlayerScreenState.Waiting)
-                }
-
-                PlayerState.STATE_DEFAULT,
-                PlayerState.STATE_PAUSED -> {
-                    _playerScreenStateLiveData.postValue(PlayerScreenState.Waiting)
+    val playerState: Flow<PlayerState> = flow {
+        playerInteractor
+            .stateFlow
+            .onEach {
+                _playerScreenState.value = when(it) {
+                    is PlayerState.Paused, PlayerState.Prepared, PlayerState.Default -> PlayerScreenState.Waiting
+                    is PlayerState.Playing -> PlayerScreenState.Playing
                 }
             }
-        }
+            .collect{ emit(it) }
+    }
+    private val _playerScreenState: MutableStateFlow<PlayerScreenState> = MutableStateFlow(PlayerScreenState.Waiting)
+    val playerScreenState: Flow<PlayerScreenState> = _playerScreenState
+
+    init {
+        playerInteractor.preparePlayer(track)
     }
 
     fun playbackControl() {
-        playerInteractor.playbackControl()
+        viewModelScope.launch(Dispatchers.Unconfined) {
+            playerInteractor.playbackControl()
+        }
     }
 
     fun playerPause() {
