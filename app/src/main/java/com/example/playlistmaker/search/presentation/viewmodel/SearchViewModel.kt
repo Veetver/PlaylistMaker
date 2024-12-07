@@ -8,6 +8,7 @@ import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.domain.model.TrackList
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.util.SingleLiveEvent
 import com.google.gson.Gson
@@ -47,21 +48,22 @@ class SearchViewModel(
             if (this.isActive) {
                 delay(SEARCH_DEBOUNCE_DELAY)
                 _searchScreenState.postValue(SearchScreenState.Loading)
-                tracksInteractor.searchTracks(query) { searchResult ->
-                    when {
-                        !searchResult.success -> _searchScreenState.postValue(SearchScreenState.Error)
-                        searchResult.trackList.list.isEmpty() -> _searchScreenState.postValue(
-                            SearchScreenState.Empty
-                        )
-
-                        else -> _searchScreenState.postValue(
-                            SearchScreenState.SearchContent(
-                                searchResult.trackList
-                            )
-                        )
-                    }
+                tracksInteractor.searchTracks(query).collect { pair ->
+                    processResult(pair.first, pair.second)
                 }
             }
+        }
+    }
+
+    private fun processResult(foundTracks: TrackList?, errorCode: Int?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks.list)
+        }
+        when {
+            errorCode != null -> _searchScreenState.postValue(SearchScreenState.Error)
+            tracks.isEmpty() -> _searchScreenState.postValue(SearchScreenState.Empty)
+            else -> _searchScreenState.postValue(SearchScreenState.SearchContent(TrackList(tracks)))
         }
     }
 

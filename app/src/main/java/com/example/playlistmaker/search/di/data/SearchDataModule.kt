@@ -20,7 +20,8 @@ val searchDataModule = module {
 
     single<RemoteDataSource> {
         RetrofitDataSource(
-            apiService = get()
+            apiService = get(),
+            get(),
         )
     }
 
