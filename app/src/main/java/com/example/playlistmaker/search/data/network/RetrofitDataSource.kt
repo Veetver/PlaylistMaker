@@ -16,24 +16,14 @@ class RetrofitDataSource(
 ) : RemoteDataSource {
 
     override suspend fun doRequest(dto: Req): Res {
-        if (!isConnected()) {
-            return Res().apply { resultCode = -2 }
-        }
+        if (!isConnected()) return Res().apply { resultCode = -1 }
 
         return withContext(Dispatchers.IO) {
             try {
-                val response = when (dto) {
-                    is TrackSearchRequest -> apiService.searchTracks(dto.query)
+                return@withContext when (dto) {
+                    is TrackSearchRequest -> apiService.searchTracks(dto.query).apply { resultCode = 200 }
                     else -> Res().apply { resultCode = 400 }
                 }
-
-                if (response.resultCode == -1) {
-                    response.apply {
-                        resultCode = 200
-                    }
-                }
-
-                return@withContext response
             } catch (e: Throwable) {
                 Res().apply { resultCode = 500 }
             }

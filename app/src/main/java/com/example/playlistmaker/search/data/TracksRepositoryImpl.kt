@@ -16,9 +16,7 @@ class TracksRepositoryImpl(
 
     override fun searchTracks(search: SearchTrackQuery): Flow<Resource<TrackList>> = flow {
         val response = remoteDataSource.doRequest(TrackSearchRequest(search.query))
-
         when (response.resultCode) {
-            -2 -> emit(Resource.Error(response.resultCode))
             200 -> {
                 response as TrackSearchResponse
                 val data = toTrackList(response.results)
