@@ -15,6 +15,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
+import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.search.presentation.viewmodel.SearchViewModel
 import com.example.playlistmaker.util.debounce
@@ -29,6 +30,14 @@ class SearchFragment : Fragment() {
 
     private var searchAdapter: SearchAdapter = SearchAdapter()
     private var searchHistoryAdapter: SearchAdapter = SearchAdapter()
+
+    private val searchDebounce = debounce<Track>(
+        CLICK_DEBOUNCE_DELAY,
+        viewLifecycleOwner.lifecycleScope,
+        false,
+    ) { track ->
+        viewModel.onItemClick(track)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -72,26 +81,14 @@ class SearchFragment : Fragment() {
             viewModel.clearHistory()
         }
 
-        viewModel.showTrackTrigger.observe(viewLifecycleOwner) { trackJson ->
-            openTrack(trackJson)
-        }
+        viewModel
+            .showTrackTrigger
+            .observe(viewLifecycleOwner) { trackJson ->
+                openTrack(trackJson)
+            }
 
-        searchAdapter.setOnItemClickListener(debounce(
-            CLICK_DEBOUNCE_DELAY,
-            viewLifecycleOwner.lifecycleScope,
-            false,
-        ) { track ->
-            viewModel.onItemClick(track)
-        })
-
-        searchHistoryAdapter.setOnItemClickListener(debounce(
-            CLICK_DEBOUNCE_DELAY,
-            viewLifecycleOwner.lifecycleScope,
-            false,
-        ) { track ->
-            viewModel.onItemClick(track)
-        })
-
+        searchAdapter.setOnItemClickListener(searchDebounce)
+        searchHistoryAdapter.setOnItemClickListener(searchDebounce)
 
 
         binding.searchResult.adapter = searchAdapter
