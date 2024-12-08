@@ -80,7 +80,7 @@ class SearchFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false,
-        ) { _, track ->
+        ) { track ->
             viewModel.onItemClick(track)
         })
 
@@ -88,7 +88,7 @@ class SearchFragment : Fragment() {
             CLICK_DEBOUNCE_DELAY,
             viewLifecycleOwner.lifecycleScope,
             false,
-        ) { _, track ->
+        ) { track ->
             viewModel.onItemClick(track)
         })
 
