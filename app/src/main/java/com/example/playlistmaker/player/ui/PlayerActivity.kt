@@ -52,28 +52,21 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
-        viewModel.trackLiveData.observe(this) { track ->
-            initializeFields(track)
-        }
-
-        lifecycle.coroutineScope.launch(Dispatchers.Main) {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.playerState.collect { state ->
-                    binding.trackTimeProgress.text = millisToStringFormatter(state.progress)
-                }
-            }
-        }
-
         lifecycle.coroutineScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.playerScreenState.collect { state ->
                     when (state) {
-                        PlayerScreenState.Playing -> binding.playerControl.setImageResource(R.drawable.pause)
-                        PlayerScreenState.Waiting -> binding.playerControl.setImageResource(R.drawable.play)
+                        is PlayerScreenState.Initializing -> initializeFields(state.track)
+                        is PlayerScreenState.Playing, is PlayerScreenState.Waiting -> updateUI(state)
                     }
                 }
             }
         }
+    }
+
+    private fun updateUI(state: PlayerScreenState) {
+        binding.trackTimeProgress.text = millisToStringFormatter(state.progress)
+        binding.playerControl.setImageResource(state.iconRes)
     }
 
     private fun initializeFields(track: TrackUI) {
