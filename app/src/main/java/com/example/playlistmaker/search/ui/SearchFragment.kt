@@ -31,14 +31,6 @@ class SearchFragment : Fragment() {
     private var searchAdapter: SearchAdapter = SearchAdapter()
     private var searchHistoryAdapter: SearchAdapter = SearchAdapter()
 
-    private val searchDebounce = debounce<Track>(
-        CLICK_DEBOUNCE_DELAY,
-        viewLifecycleOwner.lifecycleScope,
-        false,
-    ) { track ->
-        viewModel.onItemClick(track)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -86,6 +78,14 @@ class SearchFragment : Fragment() {
             .observe(viewLifecycleOwner) { trackJson ->
                 openTrack(trackJson)
             }
+
+        val searchDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false,
+        ) { track ->
+            viewModel.onItemClick(track)
+        }
 
         searchAdapter.setOnItemClickListener(searchDebounce)
         searchHistoryAdapter.setOnItemClickListener(searchDebounce)
