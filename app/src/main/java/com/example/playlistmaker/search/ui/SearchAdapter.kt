@@ -4,21 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.domain.model.TrackList
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.domain.model.TrackList
 
 class SearchAdapter() :
     RecyclerView.Adapter<SearchViewHolder>() {
 
     private var trackList: List<Track> = emptyList()
-    private var onItemClickListener: (Int, Track) -> Unit = { i: Int, track: Track -> }
+    private var onItemClickListener: (Track) -> Unit = { }
 
     fun setTrackList(list: TrackList) {
         trackList = list.list
         notifyDataSetChanged()
     }
 
-    fun setOnItemClickListener(onItemClickListener: (Int, Track) -> Unit) {
+    fun setOnItemClickListener(onItemClickListener: (Track) -> Unit) {
         this.onItemClickListener = onItemClickListener
     }
 
@@ -31,7 +31,7 @@ class SearchAdapter() :
     override fun onBindViewHolder(holder: SearchViewHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            onItemClickListener(position, trackList[position])
+            onItemClickListener(trackList[position])
         }
     }
 

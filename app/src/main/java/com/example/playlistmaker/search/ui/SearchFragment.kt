@@ -10,12 +10,15 @@ import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
+import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.search.presentation.viewmodel.SearchViewModel
+import com.example.playlistmaker.util.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -70,12 +73,22 @@ class SearchFragment : Fragment() {
             viewModel.clearHistory()
         }
 
-        viewModel.showTrackTrigger.observe(viewLifecycleOwner) { trackJson ->
-            openTrack(trackJson)
+        viewModel
+            .showTrackTrigger
+            .observe(viewLifecycleOwner) { trackJson ->
+                openTrack(trackJson)
+            }
+
+        val searchDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false,
+        ) { track ->
+            viewModel.onItemClick(track)
         }
 
-        searchAdapter.setOnItemClickListener { _, track -> viewModel.onItemClick(track) }
-        searchHistoryAdapter.setOnItemClickListener { _, track -> viewModel.onItemClick(track) }
+        searchAdapter.setOnItemClickListener(searchDebounce)
+        searchHistoryAdapter.setOnItemClickListener(searchDebounce)
 
 
         binding.searchResult.adapter = searchAdapter
@@ -156,5 +169,9 @@ class SearchFragment : Fragment() {
 
     private fun openTrack(trackJson: String) {
         PlayerActivity.show(requireContext(), trackJson)
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 300L
     }
 }

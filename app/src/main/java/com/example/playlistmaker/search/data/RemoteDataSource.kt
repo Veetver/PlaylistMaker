@@ -4,5 +4,5 @@ import com.example.playlistmaker.search.data.dto.Req
 import com.example.playlistmaker.search.data.dto.Res
 
 interface RemoteDataSource {
-    fun doRequest(dto: Req): Res
+    suspend fun doRequest(dto: Req): Res
 }

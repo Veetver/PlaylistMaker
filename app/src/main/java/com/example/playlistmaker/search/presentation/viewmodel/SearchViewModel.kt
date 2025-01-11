@@ -1,17 +1,22 @@
 package com.example.playlistmaker.search.presentation.viewmodel
 
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.domain.model.Track
+import com.example.playlistmaker.search.domain.model.TrackList
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.util.SingleLiveEvent
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
 
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
@@ -28,14 +33,37 @@ class SearchViewModel(
 
     private val lastSearchQuery: MutableLiveData<SearchTrackQuery?> = MutableLiveData()
 
-    private val handler = Handler(Looper.getMainLooper())
-
-    private val runnableToken = Any()
+    private var searchJob: Job? = null
 
     fun retrySearch() {
         val searchQuery = lastSearchQuery.value
         if (searchQuery != null) {
-            handler.post(getSearchRunnable(searchQuery))
+            searchDebounce(searchQuery)
+        }
+    }
+
+    private fun searchDebounce(query: SearchTrackQuery) {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch(Dispatchers.Default) {
+            if (this.isActive) {
+                delay(SEARCH_DEBOUNCE_DELAY)
+                _searchScreenState.postValue(SearchScreenState.Loading)
+                tracksInteractor.searchTracks(query).collect { pair ->
+                    processResult(pair.first, pair.second)
+                }
+            }
+        }
+    }
+
+    private fun processResult(foundTracks: TrackList?, errorCode: Int?) {
+        val tracks = mutableListOf<Track>()
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks.list)
+        }
+        when {
+            errorCode != null -> _searchScreenState.postValue(SearchScreenState.Error)
+            tracks.isEmpty() -> _searchScreenState.postValue(SearchScreenState.Empty)
+            else -> _searchScreenState.postValue(SearchScreenState.SearchContent(TrackList(tracks)))
         }
     }
 
@@ -43,13 +71,8 @@ class SearchViewModel(
         if ((lastSearchQuery.value?.query ?: "") == new?.query) return
 
         lastSearchQuery.value = new
-        handler.removeCallbacksAndMessages(runnableToken)
         if (new != null && new.query.isNotEmpty()) {
-            handler.postDelayed(
-                getSearchRunnable(new),
-                runnableToken,
-                SEARCH_DEBOUNCE_DELAY
-            )
+            searchDebounce(new)
         } else {
             showHistory()
         }
@@ -67,26 +90,6 @@ class SearchViewModel(
         _searchScreenState.postValue(SearchScreenState.Default)
     }
 
-    private fun getSearchRunnable(new: SearchTrackQuery): Runnable {
-        return Runnable {
-            _searchScreenState.postValue(SearchScreenState.Loading)
-            tracksInteractor.searchTracks(new) { searchResult ->
-                when {
-                    !searchResult.success -> _searchScreenState.postValue(SearchScreenState.Error)
-                    searchResult.trackList.list.isEmpty() -> _searchScreenState.postValue(
-                        SearchScreenState.Empty
-                    )
-
-                    else -> _searchScreenState.postValue(
-                        SearchScreenState.SearchContent(
-                            searchResult.trackList
-                        )
-                    )
-                }
-            }
-        }
-    }
-
     fun onItemClick(track: Track) {
         tracksHistoryInteractor.addTrack(track)
         _showTrackTrigger.postValue(gson.toJson(track))
@@ -95,7 +98,6 @@ class SearchViewModel(
             _searchScreenState.postValue(SearchScreenState.HistoryContent(tracksHistoryInteractor.getHistory()))
         }
     }
-
 
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L

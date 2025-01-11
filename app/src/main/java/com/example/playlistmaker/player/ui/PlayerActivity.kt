@@ -8,6 +8,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.coroutineScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
@@ -17,6 +20,8 @@ import com.example.playlistmaker.player.presentation.model.TrackUI
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
 import com.example.playlistmaker.player.presentation.viewmodel.PlayerViewModel
 import com.example.playlistmaker.util.mapper.DpToPxConverter.dpToPx
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
@@ -47,34 +52,25 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
-        viewModel.trackLiveData.observe(this) { track ->
-            initializeFields(track)
-        }
-
-        viewModel.playerScreenStateLiveData.observe(this) { state ->
-            changeControlButton(state)
-        }
-
-        viewModel.playerProgressLiveData.observe(this) { progress ->
-            binding.trackTimeProgress.text = millisToStringFormatter(progress)
+        lifecycle.coroutineScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.playerScreenState.collect { state ->
+                    when (state) {
+                        is PlayerScreenState.Initializing -> initializeFields(state.track)
+                        is PlayerScreenState.Playing, is PlayerScreenState.Waiting -> updateUI(state)
+                    }
+                }
+            }
         }
     }
 
-    private fun changeControlButton(state: PlayerScreenState) {
-        when (state) {
-            is PlayerScreenState.Playing -> {
-                binding.playerControl.setImageResource(R.drawable.pause)
-            }
-
-            is PlayerScreenState.Waiting -> {
-                binding.playerControl.setImageResource(R.drawable.play)
-            }
-        }
+    private fun updateUI(state: PlayerScreenState) {
+        binding.trackTimeProgress.text = millisToStringFormatter(state.progress)
+        binding.playerControl.setImageResource(state.iconRes)
     }
 
     private fun initializeFields(track: TrackUI) {
-        Glide.with(binding.coverPlaceholder.context)
-            .load(track.artworkUrl512)
+        Glide.with(binding.coverPlaceholder.context).load(track.artworkUrl512)
             .placeholder(R.drawable.cover_player_placeholder).centerCrop()
             .transform(RoundedCorners(dpToPx(8f, binding.coverPlaceholder.context)))
             .into(binding.coverPlaceholder)

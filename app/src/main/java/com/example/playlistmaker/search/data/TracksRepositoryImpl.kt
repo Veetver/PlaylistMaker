@@ -4,24 +4,26 @@ import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import com.example.playlistmaker.search.data.dto.TrackSearchResponse
 import com.example.playlistmaker.search.data.mapper.TrackListMapper.toTrackList
 import com.example.playlistmaker.search.domain.api.TracksRepository
-import com.example.playlistmaker.search.domain.model.SearchResult
+import com.example.playlistmaker.search.domain.model.Resource
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.domain.model.TrackList
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class TracksRepositoryImpl(
     private val remoteDataSource: RemoteDataSource,
 ) : TracksRepository {
 
-    override fun searchTracks(search: SearchTrackQuery): SearchResult {
+    override fun searchTracks(search: SearchTrackQuery): Flow<Resource<TrackList>> = flow {
         val response = remoteDataSource.doRequest(TrackSearchRequest(search.query))
-
-        return when (response.resultCode) {
+        when (response.resultCode) {
             200 -> {
                 response as TrackSearchResponse
-                SearchResult(true, toTrackList(response.results))
+                val data = toTrackList(response.results)
+                emit(Resource.Success(data))
             }
 
-            else -> SearchResult(false, TrackList(emptyList()))
+            else -> emit(Resource.Error(response.resultCode))
         }
     }
 }
