@@ -52,6 +52,10 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.playbackControl()
         }
 
+        binding.imageView.setOnClickListener {
+            viewModel.onFavoriteClicked()
+        }
+
         lifecycle.coroutineScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.playerScreenState.collect { state ->
@@ -67,6 +71,9 @@ class PlayerActivity : AppCompatActivity() {
     private fun updateUI(state: PlayerScreenState) {
         binding.trackTimeProgress.text = millisToStringFormatter(state.progress)
         binding.playerControl.setImageResource(state.iconRes)
+        binding.imageView.setImageResource(
+            if (state.track.isFavorite) R.drawable.favorite_active else R.drawable.favorite_inactive
+        )
     }
 
     private fun initializeFields(track: TrackUI) {

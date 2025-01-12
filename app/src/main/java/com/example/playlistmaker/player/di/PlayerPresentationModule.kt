@@ -10,6 +10,7 @@ val playerPresentationModule = module {
             jsonTrack = jsonTrack,
             gson = get(),
             playerInteractor = get(),
+            favoriteTrackInteractor = get(),
         )
     }
 }

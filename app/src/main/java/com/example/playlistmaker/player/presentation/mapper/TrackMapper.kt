@@ -21,6 +21,7 @@ object TrackMapper {
             primaryGenreName = track.primaryGenreName ?: "N/A",
             country = track.country ?: "N/A",
             previewUrl = track.previewUrl ?: "N/A",
+            isFavorite = track.isFavorite
         )
     }
 }

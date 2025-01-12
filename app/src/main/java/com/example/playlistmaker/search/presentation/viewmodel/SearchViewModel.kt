@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
 import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val tracksHistoryInteractor: TrackHistoryInteractor,
+    private val favoriteTrackInteractor: FavoriteTrackInteractor,
     private val gson: Gson,
 ) : ViewModel() {
 
@@ -48,17 +50,24 @@ class SearchViewModel(
             if (this.isActive) {
                 delay(SEARCH_DEBOUNCE_DELAY)
                 _searchScreenState.postValue(SearchScreenState.Loading)
-                tracksInteractor.searchTracks(query).collect { pair ->
-                    processResult(pair.first, pair.second)
-                }
+                tracksInteractor.searchTracks(query)
+                    .collect { pair ->
+                        processResult(
+                            foundTracks = pair.first, errorCode = pair.second
+                        )
+                    }
             }
         }
     }
 
-    private fun processResult(foundTracks: TrackList?, errorCode: Int?) {
+    private suspend fun processResult(foundTracks: TrackList?, errorCode: Int?) {
         val tracks = mutableListOf<Track>()
         if (foundTracks != null) {
-            tracks.addAll(foundTracks.list)
+            favoriteTrackInteractor
+                .getTrackListSortedByFavorite(foundTracks)
+                .collect { trackList ->
+                    tracks.addAll(trackList.list)
+                }
         }
         when {
             errorCode != null -> _searchScreenState.postValue(SearchScreenState.Error)
