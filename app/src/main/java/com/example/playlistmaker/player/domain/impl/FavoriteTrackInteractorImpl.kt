@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.domain.impl
 
-import android.util.Log
 import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
 import com.example.playlistmaker.player.domain.api.FavoriteTrackRepository
 import com.example.playlistmaker.search.domain.model.Track
@@ -17,12 +16,10 @@ class FavoriteTrackInteractorImpl(
     override suspend fun getTrackListSortedByFavorite(currentList: TrackList): Flow<TrackList> = flow {
         val favoriteTrackIds = repository.getFavoriteTrackIds().toList()
         val sorted = currentList.list.map { track ->
-            Log.d("PLM", "getTrackListSortedByFavorite: $track")
-            // TODO: Почему при открытии плеера, трек не отображается как понравившийся?
             track.apply {
                 isFavorite = favoriteTrackIds.contains(track.trackId)
             }
-        }.sortedBy { it.isFavorite }
+        }.sortedByDescending { it.isFavorite }
 
         emit(TrackList(sorted))
     }

@@ -168,6 +168,7 @@ class SearchFragment : Fragment() {
     }
 
     private fun openTrack(trackJson: String) {
+//        Log.d("TAG", "openTrack: $trackJson")
         PlayerActivity.show(requireContext(), trackJson)
     }
 

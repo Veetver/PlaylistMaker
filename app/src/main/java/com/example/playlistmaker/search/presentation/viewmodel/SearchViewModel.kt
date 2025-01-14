@@ -50,8 +50,7 @@ class SearchViewModel(
             if (this.isActive) {
                 delay(SEARCH_DEBOUNCE_DELAY)
                 _searchScreenState.postValue(SearchScreenState.Loading)
-                tracksInteractor.searchTracks(query)
-                    .collect { pair ->
+                tracksInteractor.searchTracks(query).collect { pair ->
                         processResult(
                             foundTracks = pair.first, errorCode = pair.second
                         )
@@ -88,9 +87,16 @@ class SearchViewModel(
     }
 
     fun showHistory() {
-        val historyList = tracksHistoryInteractor.getHistory()
-        if (historyList.list.isNotEmpty()) {
-            _searchScreenState.value = SearchScreenState.HistoryContent(historyList)
+        searchJob = viewModelScope.launch(Dispatchers.Default) {
+            val historyList = tracksHistoryInteractor.getHistory()
+
+            if (historyList.list.isNotEmpty()) {
+                favoriteTrackInteractor
+                    .getTrackListSortedByFavorite(historyList)
+                    .collect { trackList ->
+                        _searchScreenState.postValue(SearchScreenState.HistoryContent(trackList))
+                    }
+            }
         }
     }
 
