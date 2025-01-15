@@ -13,14 +13,10 @@ class FavoriteTrackInteractorImpl(
 ) : FavoriteTrackInteractor {
     override suspend fun addFavoriteTrack(track: Track) = repository.addFavoriteTrack(track)
     override suspend fun removeFavoriteTrack(track: Track) = repository.removeFavoriteTrack(track)
-    override suspend fun getTrackListSortedByFavorite(currentList: TrackList): Flow<TrackList> = flow {
-        val favoriteTrackIds = repository.getFavoriteTrackIds().toList()
-        val sorted = currentList.list.map { track ->
-            track.apply {
-                isFavorite = favoriteTrackIds.contains(track.trackId)
-            }
-        }.sortedByDescending { it.isFavorite }
-
-        emit(TrackList(sorted))
+    override suspend fun getTrackList(): Flow<TrackList> = repository.getFavoriteTracks()
+    override suspend fun isFavorite(track: Track): Flow<Track> = flow {
+        emit(track.apply {
+            isFavorite = repository.getFavoriteTrackIds().toList().contains(track.trackId)
+        })
     }
 }

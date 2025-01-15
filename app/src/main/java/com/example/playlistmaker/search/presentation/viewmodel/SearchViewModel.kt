@@ -51,22 +51,19 @@ class SearchViewModel(
                 delay(SEARCH_DEBOUNCE_DELAY)
                 _searchScreenState.postValue(SearchScreenState.Loading)
                 tracksInteractor.searchTracks(query).collect { pair ->
-                        processResult(
-                            foundTracks = pair.first, errorCode = pair.second
-                        )
-                    }
+                    processResult(
+                        foundTracks = pair.first, errorCode = pair.second
+                    )
+                }
             }
         }
     }
 
-    private suspend fun processResult(foundTracks: TrackList?, errorCode: Int?) {
+    private fun processResult(foundTracks: TrackList?, errorCode: Int?) {
         val tracks = mutableListOf<Track>()
         if (foundTracks != null) {
-            favoriteTrackInteractor
-                .getTrackListSortedByFavorite(foundTracks)
-                .collect { trackList ->
-                    tracks.addAll(trackList.list)
-                }
+            tracks.addAll(foundTracks.list)
+
         }
         when {
             errorCode != null -> _searchScreenState.postValue(SearchScreenState.Error)
@@ -91,11 +88,7 @@ class SearchViewModel(
             val historyList = tracksHistoryInteractor.getHistory()
 
             if (historyList.list.isNotEmpty()) {
-                favoriteTrackInteractor
-                    .getTrackListSortedByFavorite(historyList)
-                    .collect { trackList ->
-                        _searchScreenState.postValue(SearchScreenState.HistoryContent(trackList))
-                    }
+                _searchScreenState.postValue(SearchScreenState.HistoryContent(historyList))
             }
         }
     }
@@ -106,11 +99,21 @@ class SearchViewModel(
     }
 
     fun onItemClick(track: Track) {
-        tracksHistoryInteractor.addTrack(track)
-        _showTrackTrigger.postValue(gson.toJson(track))
+        viewModelScope.launch(Dispatchers.Default) {
+            favoriteTrackInteractor
+                .isFavorite(track)
+                .collect { track ->
+                    tracksHistoryInteractor.addTrack(track)
+                    _showTrackTrigger.postValue(gson.toJson(track))
 
-        if (searchScreenState.value is SearchScreenState.HistoryContent) {
-            _searchScreenState.postValue(SearchScreenState.HistoryContent(tracksHistoryInteractor.getHistory()))
+                    if (searchScreenState.value is SearchScreenState.HistoryContent) {
+                        _searchScreenState.postValue(
+                            SearchScreenState.HistoryContent(
+                                tracksHistoryInteractor.getHistory()
+                            )
+                        )
+                    }
+                }
         }
     }
 
