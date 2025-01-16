@@ -48,7 +48,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="search_placeholder_img, search_placeholder_text" />
+        app:constraint_referenced_ids="search_placeholder_img, search_placeholder_text, search_retry_btn" />
 
     <ImageView
         android:id="@+id/search_placeholder_img"
@@ -76,10 +76,11 @@
         android:id="@+id/search_retry_btn"
         style="@style/PlaylistMaker.Button.UnelevatedButton.RoundedCorner"
         android:text="@string/search_retry_btn"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/search_placeholder_text" />
+        app:layout_constraintTop_toBottomOf="@id/search_placeholder_text"
+        />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/history_group"
@@ -100,6 +101,26 @@
         android:textSize="19sp"
         app:layout_constraintTop_toBottomOf="@id/search_bar_container" />
 
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/track_list_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/default_margin_16dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/clear_history_btn"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/search_history_title"
+        app:layout_constraintVertical_bias="0.0"
+        android:visibility="gone"
+        tools:itemCount="10"
+        tools:listitem="@layout/item_recyclerview_search_activity" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/clear_history_btn"
         style="@style/PlaylistMaker.Button.UnelevatedButton.RoundedCorner"
@@ -107,21 +128,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/track_list_rv" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/track_list_rv"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="@dimen/default_margin_16dp"
-        android:layout_marginTop="8dp"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_history_title"
-        tools:listitem="@layout/item_recyclerview_search_activity" />
 
     <ProgressBar
         android:id="@+id/search_progress"

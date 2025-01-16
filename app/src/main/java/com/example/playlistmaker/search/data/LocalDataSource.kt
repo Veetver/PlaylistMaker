@@ -1,9 +1,10 @@
 package com.example.playlistmaker.search.data
 
+import com.example.playlistmaker.search.data.dto.TrackDto
 import com.example.playlistmaker.search.data.dto.TrackListDto
 
 interface LocalDataSource {
-    fun getSearchHistory(): TrackListDto
-    fun saveSearchHistory(history: TrackListDto): Boolean
-    fun clearSearchHistory(): Boolean
+    suspend fun getHistory(): TrackListDto
+    suspend fun save(track: TrackDto)
+    suspend fun clearHistory()
 }

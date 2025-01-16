@@ -14,17 +14,17 @@ class FavoriteTrackRepositoryImpl(
     private val appDatabase: AppDatabase,
 ) : FavoriteTrackRepository {
     override suspend fun addFavoriteTrack(track: Track) {
-        appDatabase.trackDao().insertTrack(track = track.toTrackEntity())
+        appDatabase.trackFavoriteDao().insertTrack(track = track.toTrackEntity())
     }
 
     override suspend fun removeFavoriteTrack(track: Track) {
-        appDatabase.trackDao().deleteTrack(trackId = track.trackId)
+        appDatabase.trackFavoriteDao().deleteTrack(trackId = track.trackId)
     }
 
     override suspend fun getFavoriteTracks(): Flow<TrackList> = flow {
-        val tracks = appDatabase.trackDao().getTracks().sortedByDescending { it.id }
+        val tracks = appDatabase.trackFavoriteDao().getTracks().sortedByDescending { it.id }
         emit(TrackList(tracks.map { it.toTrack() }))
     }
 
-    override suspend fun getFavoriteTrackIds(): Flow<Long> = appDatabase.trackDao().getTrackIds().asFlow()
+    override suspend fun getFavoriteTrackIds(): Flow<Long> = appDatabase.trackFavoriteDao().getTrackIds().asFlow()
 }

@@ -94,8 +94,10 @@ class SearchViewModel(
     }
 
     fun clearHistory() {
-        tracksHistoryInteractor.clearHistory()
-        _searchScreenState.postValue(SearchScreenState.Default)
+        viewModelScope.launch(Dispatchers.Default) {
+            tracksHistoryInteractor.clearHistory()
+            _searchScreenState.postValue(SearchScreenState.Default)
+        }
     }
 
     fun onItemClick(track: Track) {
