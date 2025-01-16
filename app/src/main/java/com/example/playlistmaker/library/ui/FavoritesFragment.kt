@@ -14,7 +14,7 @@ import com.example.playlistmaker.library.presentation.state.FavoritesScreenState
 import com.example.playlistmaker.library.presentation.viewmodel.FavoritesViewModel
 import com.example.playlistmaker.player.ui.PlayerActivity
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.ui.SearchAdapter
+import com.example.playlistmaker.search.ui.TrackListAdapter
 import com.example.playlistmaker.util.debounce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,7 +23,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class FavoritesFragment : Fragment() {
     private lateinit var binding: FragmentFavoritesBinding
     private val viewModel: FavoritesViewModel by viewModel()
-    private var trackListAdapter: SearchAdapter = SearchAdapter()
+    private var trackListAdapter: TrackListAdapter = TrackListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

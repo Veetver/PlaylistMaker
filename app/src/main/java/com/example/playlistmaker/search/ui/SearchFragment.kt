@@ -28,8 +28,7 @@ class SearchFragment : Fragment() {
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
 
-    private var searchAdapter: SearchAdapter = SearchAdapter()
-    private var searchHistoryAdapter: SearchAdapter = SearchAdapter()
+    private var trackListAdapter: TrackListAdapter = TrackListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -87,12 +86,9 @@ class SearchFragment : Fragment() {
             viewModel.onItemClick(track)
         }
 
-        searchAdapter.setOnItemClickListener(searchDebounce)
-        searchHistoryAdapter.setOnItemClickListener(searchDebounce)
+        trackListAdapter.setOnItemClickListener(searchDebounce)
 
-
-        binding.searchResult.adapter = searchAdapter
-        binding.searchHistory.adapter = searchHistoryAdapter
+        binding.trackListRv.adapter = trackListAdapter
     }
 
     override fun onDestroyView() {
@@ -105,12 +101,12 @@ class SearchFragment : Fragment() {
             SearchScreenState.Default -> showDefault()
             is SearchScreenState.Loading -> showLoading()
             is SearchScreenState.SearchContent -> {
-                searchAdapter.setTrackList(state.trackList)
+                trackListAdapter.setTrackList(state.trackList)
                 showResult()
             }
 
             is SearchScreenState.HistoryContent -> {
-                searchHistoryAdapter.setTrackList(state.trackList)
+                trackListAdapter.setTrackList(state.trackList)
                 showHistory()
             }
 
@@ -121,54 +117,57 @@ class SearchFragment : Fragment() {
 
     private fun showDefault() {
         binding.searchProgress.isVisible = false
-        binding.searchPlaceholder.isVisible = false
-        binding.searchHistoryContainer.isVisible = false
-        binding.searchResult.isVisible = false
+        binding.placeholderGroup.isVisible = false
+        binding.searchRetryBtn.isVisible = false
+        binding.historyGroup.isVisible = false
+        binding.trackListRv.isVisible = false
     }
 
     private fun showLoading() {
         binding.searchProgress.isVisible = true
-        binding.searchPlaceholder.isVisible = false
-        binding.searchHistoryContainer.isVisible = false
-        binding.searchResult.isVisible = false
+        binding.placeholderGroup.isVisible = false
+        binding.searchRetryBtn.isVisible = false
+        binding.historyGroup.isVisible = false
+        binding.trackListRv.isVisible = false
     }
 
     private fun showResult() {
+        binding.searchProgress.isVisible = true
+        binding.placeholderGroup.isVisible = false
+        binding.searchRetryBtn.isVisible = false
+        binding.historyGroup.isVisible = false
+        binding.trackListRv.isVisible = true
         binding.searchProgress.isVisible = false
-        binding.searchHistoryContainer.isVisible = false
-        binding.searchPlaceholder.isVisible = false
-        binding.searchResult.isVisible = true
     }
 
     private fun showHistory() {
         binding.searchProgress.isVisible = false
-        binding.searchHistoryContainer.isVisible = true
-        binding.searchPlaceholder.isVisible = false
-        binding.searchResult.isVisible = false
+        binding.placeholderGroup.isVisible = false
+        binding.searchRetryBtn.isVisible = false
+        binding.historyGroup.isVisible = true
+        binding.trackListRv.isVisible = true
+        binding.searchProgress.isVisible = false
     }
 
     private fun showEmpty() {
         binding.searchProgress.isVisible = false
-        binding.searchPlaceholder.isVisible = true
+        binding.placeholderGroup.isVisible = true
         binding.searchPlaceholderImg.setImageResource(R.drawable.empty_search_placeholder)
         binding.searchPlaceholderText.text = getString(R.string.search_empty)
         binding.searchRetryBtn.isVisible = false
-        binding.searchResult.isVisible = false
-        binding.searchHistoryContainer.isVisible = false
+        binding.trackListRv.isVisible = false
     }
 
     private fun showError() {
         binding.searchProgress.isVisible = false
-        binding.searchPlaceholder.isVisible = true
+        binding.placeholderGroup.isVisible = true
         binding.searchPlaceholderImg.setImageResource(R.drawable.error_search_placeholder)
         binding.searchPlaceholderText.text = getString(R.string.search_error)
         binding.searchRetryBtn.isVisible = true
-        binding.searchResult.isVisible = false
-        binding.searchHistoryContainer.isVisible = false
+        binding.trackListRv.isVisible = false
     }
 
     private fun openTrack(trackJson: String) {
-//        Log.d("TAG", "openTrack: $trackJson")
         PlayerActivity.show(requireContext(), trackJson)
     }
 

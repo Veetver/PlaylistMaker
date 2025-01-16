@@ -7,7 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.domain.model.TrackList
 
-class SearchAdapter() :
+class TrackListAdapter() :
     RecyclerView.Adapter<SearchViewHolder>() {
 
     private var trackList: List<Track> = emptyList()
