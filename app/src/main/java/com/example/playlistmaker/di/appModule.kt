@@ -1,5 +1,6 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.core.di.coreDataModule
 import com.example.playlistmaker.library.di.libraryPresentationModule
 import com.example.playlistmaker.player.di.playerDataModule
 import com.example.playlistmaker.player.di.playerDomainModule
@@ -16,6 +17,9 @@ import com.google.gson.Gson
 import org.koin.dsl.module
 
 val appModule = module {
+    // Core
+    includes(coreDataModule)
+
     // PlayerFeature
     includes(playerDataModule, playerDomainModule, playerPresentationModule)
 

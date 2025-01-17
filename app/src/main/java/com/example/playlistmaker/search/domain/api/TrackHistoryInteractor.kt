@@ -1,10 +1,10 @@
 package com.example.playlistmaker.search.domain.api
 
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.model.TrackList
+import kotlinx.coroutines.flow.Flow
 
 interface TrackHistoryInteractor {
-    fun addTrack(track: Track)
-    fun getHistory(): TrackList
-    fun clearHistory()
+    suspend fun addTrack(track: Track)
+    fun getHistory(): Flow<List<Track>>
+    suspend fun clearHistory()
 }
