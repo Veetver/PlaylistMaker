@@ -7,7 +7,6 @@ import com.example.playlistmaker.library.presentation.state.FavoritesScreenState
 import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
 import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.model.TrackList
 import com.example.playlistmaker.util.SingleLiveEvent
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +20,8 @@ class FavoritesViewModel(
     private val tracksHistoryInteractor: TrackHistoryInteractor,
 ) : ViewModel() {
 
-    private val _favoritesScreenState: MutableStateFlow<FavoritesScreenState> = MutableStateFlow(FavoritesScreenState.Loading)
+    private val _favoritesScreenState: MutableStateFlow<FavoritesScreenState> =
+        MutableStateFlow(FavoritesScreenState.Loading)
     val favoritesScreenState: StateFlow<FavoritesScreenState> = _favoritesScreenState
 
     private val _showTrackTrigger = SingleLiveEvent<String>()
@@ -34,15 +34,18 @@ class FavoritesViewModel(
     fun updateState() {
         viewModelScope.launch(Dispatchers.Default) {
             favoriteTrackInteractor
-                .getTrackList()
-                .collect{ trackList ->
-                    process(trackList)
+                .getTracks()
+                .collect { list ->
+                    process(list)
                 }
         }
     }
 
-    private fun process(trackList: TrackList) {
-        _favoritesScreenState.value = if (trackList.list.isEmpty()) FavoritesScreenState.Empty else FavoritesScreenState.Content(trackList)
+    private fun process(trackList: List<Track>) {
+        _favoritesScreenState.value =
+            if (trackList.isEmpty()) FavoritesScreenState.Empty else FavoritesScreenState.Content(
+                trackList
+            )
     }
 
     fun onItemClick(track: Track) {

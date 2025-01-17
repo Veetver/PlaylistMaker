@@ -9,13 +9,13 @@ import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.model.TrackList
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.util.SingleLiveEvent
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -59,16 +59,16 @@ class SearchViewModel(
         }
     }
 
-    private fun processResult(foundTracks: TrackList?, errorCode: Int?) {
+    private fun processResult(foundTracks: List<Track>?, errorCode: Int?) {
         val tracks = mutableListOf<Track>()
         if (foundTracks != null) {
-            tracks.addAll(foundTracks.list)
+            tracks.addAll(foundTracks)
 
         }
         when {
             errorCode != null -> _searchScreenState.postValue(SearchScreenState.Error)
             tracks.isEmpty() -> _searchScreenState.postValue(SearchScreenState.Empty)
-            else -> _searchScreenState.postValue(SearchScreenState.SearchContent(TrackList(tracks)))
+            else -> _searchScreenState.postValue(SearchScreenState.SearchContent(tracks))
         }
     }
 
@@ -85,11 +85,14 @@ class SearchViewModel(
 
     fun showHistory() {
         searchJob = viewModelScope.launch(Dispatchers.Default) {
-            val historyList = tracksHistoryInteractor.getHistory()
-
-            if (historyList.list.isNotEmpty()) {
-                _searchScreenState.postValue(SearchScreenState.HistoryContent(historyList))
-            }
+            tracksHistoryInteractor
+                .getHistory()
+                .first()
+                .let { history ->
+                    if (history.isNotEmpty()) {
+                        _searchScreenState.postValue(SearchScreenState.HistoryContent(history))
+                    }
+                }
         }
     }
 
@@ -109,11 +112,13 @@ class SearchViewModel(
                     _showTrackTrigger.postValue(gson.toJson(track))
 
                     if (searchScreenState.value is SearchScreenState.HistoryContent) {
-                        _searchScreenState.postValue(
-                            SearchScreenState.HistoryContent(
-                                tracksHistoryInteractor.getHistory()
-                            )
-                        )
+                        tracksHistoryInteractor
+                            .getHistory()
+                            .collect { list ->
+                                _searchScreenState.postValue(
+                                    SearchScreenState.HistoryContent(list)
+                                )
+                            }
                     }
                 }
         }

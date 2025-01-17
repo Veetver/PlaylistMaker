@@ -5,10 +5,8 @@ import com.example.playlistmaker.core.data.mappers.TrackEntityMapper.toTrack
 import com.example.playlistmaker.core.data.mappers.TrackMapper.toTrackEntity
 import com.example.playlistmaker.player.domain.api.FavoriteTrackRepository
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.model.TrackList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class FavoriteTrackRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -21,10 +19,7 @@ class FavoriteTrackRepositoryImpl(
         appDatabase.trackFavoriteDao().deleteTrack(trackId = track.trackId)
     }
 
-    override suspend fun getFavoriteTracks(): Flow<TrackList> = flow {
-        val tracks = appDatabase.trackFavoriteDao().getTracks().sortedByDescending { it.id }
-        emit(TrackList(tracks.map { it.toTrack() }))
-    }
+    override suspend fun getFavoriteTracks(): Flow<List<Track>> = appDatabase.trackFavoriteDao().getTracks().map { list -> list.map { it.toTrack() }}
 
-    override suspend fun getFavoriteTrackIds(): Flow<Long> = appDatabase.trackFavoriteDao().getTrackIds().asFlow()
+    override suspend fun getFavoriteTrackIds(): Flow<List<Long>> = appDatabase.trackFavoriteDao().getTrackIds()
 }

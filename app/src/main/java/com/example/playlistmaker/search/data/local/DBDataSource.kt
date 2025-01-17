@@ -5,25 +5,32 @@ import com.example.playlistmaker.core.data.mappers.TrackDtoMapper.toTrackHistory
 import com.example.playlistmaker.core.data.mappers.TrackHistoryEntityMapper.toTrackDto
 import com.example.playlistmaker.search.data.LocalDataSource
 import com.example.playlistmaker.search.data.dto.TrackDto
-import com.example.playlistmaker.search.data.dto.TrackListDto
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class DBDataSource(
     private val appDatabase: AppDatabase
-): LocalDataSource {
-    override suspend fun getHistory(): TrackListDto =
-        TrackListDto(
-            appDatabase
-                .trackHistoryDao()
-                .getTracks()
-                .sortedByDescending { it.id }
-                .map { it.toTrackDto() }
-        )
-
+) : LocalDataSource {
+    override fun getHistory(): Flow<List<TrackDto>> =
+        appDatabase
+            .trackHistoryDao()
+            .getTracks()
+            .map { list ->
+                list.map { it.toTrackDto() }
+            }
 
     override suspend fun save(track: TrackDto) {
-        appDatabase.trackHistoryDao().insert(track.toTrackHistoryEntity())
-        appDatabase.trackHistoryDao().limitTable()
+        appDatabase
+            .trackHistoryDao()
+            .insert(track.toTrackHistoryEntity())
+
+        appDatabase
+            .trackHistoryDao()
+            .limitTable()
     }
 
-    override suspend fun clearHistory() =appDatabase.trackHistoryDao().dropTable()
+    override suspend fun clearHistory() =
+        appDatabase
+            .trackHistoryDao()
+            .dropTable()
 }

@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
@@ -36,7 +35,6 @@ class PlayerViewModel(
 
         viewModelScope.launch(Dispatchers.Default) {
             playerInteractor.stateFlow.onEach { state ->
-                Log.d("PLM", "vm state: $state")
                     when (state) {
                         is PlayerState.Paused, PlayerState.Prepared, PlayerState.Default -> _playerScreenState.value =
                             PlayerScreenState.Waiting(

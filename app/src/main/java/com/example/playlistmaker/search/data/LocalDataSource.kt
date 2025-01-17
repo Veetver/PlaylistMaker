@@ -1,10 +1,10 @@
 package com.example.playlistmaker.search.data
 
 import com.example.playlistmaker.search.data.dto.TrackDto
-import com.example.playlistmaker.search.data.dto.TrackListDto
+import kotlinx.coroutines.flow.Flow
 
 interface LocalDataSource {
-    suspend fun getHistory(): TrackListDto
+    fun getHistory(): Flow<List<TrackDto>>
     suspend fun save(track: TrackDto)
     suspend fun clearHistory()
 }

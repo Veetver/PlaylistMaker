@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.core.data.db.entity.TrackHistoryEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TrackHistoryDao {
@@ -17,6 +18,6 @@ interface TrackHistoryDao {
     @Query("DELETE FROM history_track")
     suspend fun dropTable()
 
-    @Query("SELECT * FROM history_track")
-    suspend fun getTracks(): List<TrackHistoryEntity>
+    @Query("SELECT * FROM history_track ORDER BY id DESC")
+    fun getTracks(): Flow<List<TrackHistoryEntity>>
 }

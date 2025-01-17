@@ -5,7 +5,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.model.Track
-import com.example.playlistmaker.search.domain.model.TrackList
 
 class TrackListAdapter() :
     RecyclerView.Adapter<SearchViewHolder>() {
@@ -13,8 +12,8 @@ class TrackListAdapter() :
     private var trackList: List<Track> = emptyList()
     private var onItemClickListener: (Track) -> Unit = { }
 
-    fun setTrackList(list: TrackList) {
-        trackList = list.list
+    fun setTrackList(list: List<Track>) {
+        trackList = list
         notifyDataSetChanged()
     }
 
