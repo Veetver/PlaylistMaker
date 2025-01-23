@@ -7,25 +7,43 @@
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="com.example.playlistmaker.search.ui.SearchFragment"
+        android:name="com.example.playlistmaker.search.presentation.ui.SearchFragment"
         android:label="fragment_search"
         tools:layout="@layout/fragment_search" >
         <action
-            android:id="@+id/action_searchFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
+            android:id="@+id/action_searchFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
     <fragment
         android:id="@+id/libraryFragment"
-        android:name="com.example.playlistmaker.library.ui.LibraryFragment"
+        android:name="com.example.playlistmaker.library.presentation.ui.LibraryFragment"
         android:label="fragment_library"
-        tools:layout="@layout/fragment_library" />
+        tools:layout="@layout/fragment_library" >
+        <action
+            android:id="@+id/action_libraryFragment_to_newPlaylist"
+            app:destination="@id/newPlaylist" />
+        <action
+            android:id="@+id/action_libraryFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
-        android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
+        android:name="com.example.playlistmaker.settings.presentation.ui.SettingsFragment"
         android:label="fragment_settings"
         tools:layout="@layout/fragment_settings" />
-    <activity
-        android:id="@+id/playerActivity"
-        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
-        android:label="PlayerActivity" />
+    <fragment
+        android:id="@+id/newPlaylist"
+        android:name="com.example.playlistmaker.library_new_playlist.presentation.ui.NewPlaylistFragment"
+        android:label="NewPlaylist" />
+    <fragment
+        android:id="@+id/playerFragment"
+        android:name="com.example.playlistmaker.player.presentation.ui.PlayerFragment"
+        android:label="PlayerFragment">
+        <argument
+            android:name="track"
+            app:argType="com.example.playlistmaker.search.domain.model.Track" />
+        <action
+            android:id="@+id/action_playerFragment_to_newPlaylist"
+            app:destination="@id/newPlaylist" />
+    </fragment>
 </navigation>

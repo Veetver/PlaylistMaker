@@ -2,53 +2,85 @@ package com.example.playlistmaker.player.presentation.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.R
+import com.example.playlistmaker.core.data.db.AppDatabase
+import com.example.playlistmaker.core.data.db.entity.PlaylistAndTrackEntity
+import com.example.playlistmaker.core.data.mappers.TrackMapper.toPlaylistTrackEntity
+import com.example.playlistmaker.library.presentation.model.CreatedPlaylist
+import com.example.playlistmaker.library.presentation.state.PlaylistsState
+import com.example.playlistmaker.library_new_playlist.domain.impl.LoadFileUseCase
 import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.model.PlayerState
 import com.example.playlistmaker.player.presentation.state.PlayerScreenState
+import com.example.playlistmaker.player.presentation.state.PlayerTrackState
 import com.example.playlistmaker.search.domain.model.Track
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.example.playlistmaker.player.presentation.mapper.TrackMapper as TrackMapperUI
 
 class PlayerViewModel(
-    jsonTrack: String,
-    gson: Gson,
+    private val track: Track,
     private val playerInteractor: PlayerInteractor,
     private val favoriteTrackInteractor: FavoriteTrackInteractor,
+    private val appDatabase: AppDatabase,
+    private val loadFileUseCase: LoadFileUseCase,
 ) : ViewModel() {
-
-    private val track = gson.fromJson(jsonTrack, Track::class.java)
 
     private val _playerScreenState: MutableStateFlow<PlayerScreenState> =
         MutableStateFlow(PlayerScreenState.Initializing(TrackMapperUI.toTrackUI(track)))
     val playerScreenState: Flow<PlayerScreenState> = _playerScreenState
 
+    private val _playlistsState: MutableStateFlow<PlaylistsState> =
+        MutableStateFlow(PlaylistsState(isLoading = false))
+    val playlistsState: StateFlow<PlaylistsState> = _playlistsState
+
+    private val _playerTrackState: MutableStateFlow<PlayerTrackState> =
+        MutableStateFlow(PlayerTrackState(inProgress = false))
+    val playerTrackState: StateFlow<PlayerTrackState> = _playerTrackState
+
     init {
         playerInteractor.preparePlayer(track)
 
         viewModelScope.launch(Dispatchers.Default) {
-            playerInteractor.stateFlow.onEach { state ->
-                    when (state) {
-                        is PlayerState.Paused, PlayerState.Prepared, PlayerState.Default -> _playerScreenState.value =
-                            PlayerScreenState.Waiting(
-                                track = TrackMapperUI.toTrackUI(track), progress = state.progress
-                            )
+            playerInteractor.stateFlow.collect { state ->
+                when (state) {
+                    is PlayerState.Paused, PlayerState.Prepared, PlayerState.Default -> _playerScreenState.value =
+                        PlayerScreenState.Waiting(
+                            track = TrackMapperUI.toTrackUI(track), progress = state.progress
+                        )
 
-                        is PlayerState.Playing -> _playerScreenState.value =
-                            PlayerScreenState.Playing(
-                                track = TrackMapperUI.toTrackUI(track), progress = state.progress
-                            )
-                    }
-                }.collect()
+                    is PlayerState.Playing -> _playerScreenState.value = PlayerScreenState.Playing(
+                        track = TrackMapperUI.toTrackUI(track), progress = state.progress
+                    )
+                }
+            }
         }
     }
+
+    suspend fun loadPlaylists() = withContext(Dispatchers.IO) {
+        _playlistsState.update { it.copy(isLoading = true) }
+        val list = appDatabase.playlistDao().getPlaylists().first()
+
+        val createdPlaylist = list.map { item ->
+            CreatedPlaylist(
+                item.id,
+                item.name,
+                appDatabase.playlistDao().getTrackCount(item.id).firstOrNull() ?: 0,
+                loadFileUseCase(item.coverName.toString()).firstOrNull(),
+                R.layout.item_recyclerview_playlist_horizontal
+            )
+        }
+        _playlistsState.update { it.copy(isLoading = false, list = createdPlaylist) }
+    }
+
 
     fun onFavoriteClicked() {
         viewModelScope.launch {
@@ -60,6 +92,38 @@ class PlayerViewModel(
                 track.isFavorite = true
             }
             _playerScreenState.update { it.copy(track = TrackMapperUI.toTrackUI(track)) }
+        }
+    }
+
+    fun addToPlaylist(item: CreatedPlaylist) {
+        val playlistTrackEntity = track.toPlaylistTrackEntity()
+        val playlistAndTrackEntity = PlaylistAndTrackEntity(
+            playlistId = item.id, playlistTrackId = track.trackId
+        )
+
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = appDatabase
+                .playlistDao()
+                .containsInPlaylist(item.id, track.trackId)
+                .firstOrNull()
+
+            val isAdded = when (result == null) {
+                true -> {
+                    appDatabase.playlistDao().insertPlaylistTrack(playlistTrackEntity)
+                    appDatabase.playlistDao().addToPlaylist(playlistAndTrackEntity)
+                    true
+                }
+
+                false -> false
+            }
+
+            _playerTrackState.update {
+                it.copy(
+                    inProgress = true,
+                    playlist = item,
+                    isAdded = isAdded
+                )
+            }
         }
     }
 

@@ -13,4 +13,6 @@
     <dimen name="artwork_item_search_rv_45dp">48dp</dimen>
     <dimen name="artwork_item_search_rv_padding_end_8dp">8dp</dimen>
     <dimen name="btn_radius_54dp">54dp</dimen>
+    <dimen name="margin_24dp">24dp</dimen>
+    <dimen name="margin_32dp">32dp</dimen>
 </resources>

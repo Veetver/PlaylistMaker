@@ -2,6 +2,9 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.core.di.coreDataModule
 import com.example.playlistmaker.library.di.libraryPresentationModule
+import com.example.playlistmaker.library_new_playlist.di.newPlaylistDataModule
+import com.example.playlistmaker.library_new_playlist.di.newPlaylistDomainModule
+import com.example.playlistmaker.library_new_playlist.di.newPlaylistPresentationModule
 import com.example.playlistmaker.player.di.playerDataModule
 import com.example.playlistmaker.player.di.playerDomainModule
 import com.example.playlistmaker.player.di.playerPresentationModule
@@ -13,7 +16,6 @@ import com.example.playlistmaker.settings.di.settingsDomainModule
 import com.example.playlistmaker.settings.di.settingsPresentationModule
 import com.example.playlistmaker.share.di.shareDataModule
 import com.example.playlistmaker.share.di.shareDomainModule
-import com.google.gson.Gson
 import org.koin.dsl.module
 
 val appModule = module {
@@ -35,7 +37,6 @@ val appModule = module {
     // LibraryFeature
     includes(libraryPresentationModule)
 
-    single {
-        Gson()
-    }
+    // NewPlaylistFeature
+    includes(newPlaylistDataModule, newPlaylistDomainModule, newPlaylistPresentationModule)
 }

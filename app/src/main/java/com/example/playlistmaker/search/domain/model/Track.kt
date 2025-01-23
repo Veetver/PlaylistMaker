@@ -1,5 +1,10 @@
 package com.example.playlistmaker.search.domain.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Track(
     val trackId: Long,
     val trackName: String?,
@@ -11,6 +16,7 @@ data class Track(
     val primaryGenreName: String?,
     val country: String?,
     val previewUrl: String?,
-) {
+): Parcelable {
+    @IgnoredOnParcel
     var isFavorite: Boolean = false
 }
