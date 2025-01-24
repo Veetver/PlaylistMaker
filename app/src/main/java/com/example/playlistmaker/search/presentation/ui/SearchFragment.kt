@@ -46,28 +46,28 @@ class SearchFragment : Fragment() {
                 render(state)
             }
 
-        binding.searchEditText.doAfterTextChanged {
-            binding.clearTextBtn.isVisible = !binding.searchEditText.text.isNullOrEmpty()
+        binding.searchEt.doAfterTextChanged {
+            binding.clearTextIv.isVisible = !binding.searchEt.text.isNullOrEmpty()
         }
 
-        binding.searchEditText.doOnTextChanged { text, _, _, _ ->
+        binding.searchEt.doOnTextChanged { text, _, _, _ ->
             viewModel.searchQueryChanged(SearchTrackQuery(text.toString()))
         }
 
-        binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && binding.searchEditText.text.isNullOrEmpty()) viewModel.showHistory()
+        binding.searchEt.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && binding.searchEt.text.isNullOrEmpty()) viewModel.showHistory()
         }
 
         binding.searchRetryBtn.setOnClickListener {
             viewModel.retrySearch()
         }
 
-        binding.clearTextBtn.setOnClickListener {
-            binding.searchEditText.text = null
+        binding.clearTextIv.setOnClickListener {
+            binding.searchEt.text = null
 
             val inputMethodManager =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-            inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
+            inputMethodManager?.hideSoftInputFromWindow(binding.searchEt.windowToken, 0)
         }
 
         binding.clearHistoryBtn.setOnClickListener {
@@ -152,8 +152,8 @@ class SearchFragment : Fragment() {
     private fun showEmpty() {
         binding.searchProgress.isVisible = false
         binding.placeholderGroup.isVisible = true
-        binding.searchPlaceholderImg.setImageResource(R.drawable.empty_search_placeholder)
-        binding.searchPlaceholderText.text = getString(R.string.search_empty)
+        binding.searchPlaceholderIv.setImageResource(R.drawable.empty_placeholder)
+        binding.searchPlaceholderTv.text = getString(R.string.search_empty)
         binding.searchRetryBtn.isVisible = false
         binding.trackListRv.isVisible = false
     }
@@ -161,8 +161,8 @@ class SearchFragment : Fragment() {
     private fun showError() {
         binding.searchProgress.isVisible = false
         binding.placeholderGroup.isVisible = true
-        binding.searchPlaceholderImg.setImageResource(R.drawable.error_search_placeholder)
-        binding.searchPlaceholderText.text = getString(R.string.search_error)
+        binding.searchPlaceholderIv.setImageResource(R.drawable.error_search_placeholder)
+        binding.searchPlaceholderTv.text = getString(R.string.search_error)
         binding.searchRetryBtn.isVisible = true
         binding.trackListRv.isVisible = false
     }

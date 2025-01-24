@@ -8,7 +8,7 @@
     tools:context=".search.presentation.ui.SearchFragment">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_search"
+        android:id="@+id/toolbar"
         style="@style/PlaylistMakerToolbarStyle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,14 +23,14 @@
         android:paddingVertical="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar_search">
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
 
         <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/search_edit_text"
+            android:id="@+id/search_et"
             style="@style/PlayListMakerSearchEditText" />
 
         <ImageView
-            android:id="@+id/clear_text_btn"
+            android:id="@+id/clear_text_iv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center"
@@ -47,11 +47,11 @@
         android:id="@+id/placeholder_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        app:constraint_referenced_ids="search_placeholder_img, search_placeholder_text, search_retry_btn" />
+        android:visibility="visible"
+        app:constraint_referenced_ids="search_placeholder_iv, search_placeholder_tv, search_retry_btn" />
 
     <ImageView
-        android:id="@+id/search_placeholder_img"
+        android:id="@+id/search_placeholder_iv"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:layout_marginTop="112dp"
@@ -59,18 +59,17 @@
         tools:src="@drawable/error_search_placeholder" />
 
     <TextView
-        android:id="@+id/search_placeholder_text"
+        android:id="@+id/search_placeholder_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:fontFamily="@font/ys_display_medium"
+        android:text="@string/search_error"
         android:textAlignment="center"
         android:textColor="?attr/colorOnPrimary"
         android:textFontWeight="400"
         android:textSize="19sp"
-        app:layout_constraintTop_toBottomOf="@+id/search_placeholder_img"
-        tools:layout_editor_absoluteX="24dp"
-        tools:text="@string/search_error" />
+        app:layout_constraintTop_toBottomOf="@+id/search_placeholder_iv" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/search_retry_btn"
@@ -79,18 +78,17 @@
         android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_placeholder_text"
-        />
+        app:layout_constraintTop_toBottomOf="@id/search_placeholder_tv" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/history_group"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="search_history_title, clear_history_btn" />
+        app:constraint_referenced_ids="search_history_title_tv, clear_history_btn" />
 
     <TextView
-        android:id="@+id/search_history_title"
+        android:id="@+id/search_history_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/ys_display_medium"
@@ -110,14 +108,14 @@
         android:layout_marginTop="4dp"
         android:layout_weight="1"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constrainedHeight="true"
         app:layout_constraintBottom_toTopOf="@id/clear_history_btn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_history_title"
+        app:layout_constraintTop_toBottomOf="@id/search_history_title_tv"
         app:layout_constraintVertical_bias="0.0"
-        android:visibility="gone"
         tools:itemCount="10"
         tools:listitem="@layout/item_recyclerview_search_activity" />
 

@@ -19,24 +19,11 @@ import com.example.playlistmaker.share.di.shareDomainModule
 import org.koin.dsl.module
 
 val appModule = module {
-    // Core
     includes(coreDataModule)
-
-    // PlayerFeature
     includes(playerDataModule, playerDomainModule, playerPresentationModule)
-
-    // SearchFeature
     includes(searchDataModule, searchDomainModule, searchPresentationModule)
-
-    // SettingsFeature
     includes(settingsDataModule, settingsDomainModule, settingsPresentationModule)
-
-    // ShareFeature
     includes(shareDataModule, shareDomainModule)
-
-    // LibraryFeature
     includes(libraryPresentationModule)
-
-    // NewPlaylistFeature
     includes(newPlaylistDataModule, newPlaylistDomainModule, newPlaylistPresentationModule)
 }

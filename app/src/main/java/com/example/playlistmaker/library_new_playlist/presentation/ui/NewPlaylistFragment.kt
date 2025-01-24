@@ -59,9 +59,9 @@ class NewPlaylistFragment : Fragment() {
             navigateUp(confirmDialog)
         }
 
-        binding.nameEditText.doOnTextChanged { text, _, _, _ ->
+        binding.nameEt.doOnTextChanged { text, _, _, _ ->
             viewModel.setName(text.toString())
-            binding.createPlaylistButton.isEnabled = !text.isNullOrEmpty()
+            binding.createPlaylistBtn.isEnabled = !text.isNullOrEmpty()
         }
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
@@ -81,7 +81,7 @@ class NewPlaylistFragment : Fragment() {
             }
         }
 
-        binding.descriptionEditText.doOnTextChanged { text, _, _, _ ->
+        binding.descriptionEt.doOnTextChanged { text, _, _, _ ->
             viewModel.setDescription(text.toString())
         }
 
@@ -89,16 +89,16 @@ class NewPlaylistFragment : Fragment() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    showImage(binding.coverImageView, uri)
+                    showImage(binding.coverIv, uri)
                     viewModel.setCover(uri)
                 }
             }
 
-        binding.coverImageView.setOnClickListener {
+        binding.coverIv.setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
 
-        binding.createPlaylistButton.setOnClickListener {
+        binding.createPlaylistBtn.setOnClickListener {
             viewModel.createPlaylist()
         }
 
@@ -111,8 +111,8 @@ class NewPlaylistFragment : Fragment() {
 
     private fun navigateUp(dialog: MaterialAlertDialogBuilder) {
         if (
-            binding.nameEditText.text.toString().isNotEmpty() ||
-            binding.descriptionEditText.text.toString().isNotEmpty() ||
+            binding.nameEt.text.toString().isNotEmpty() ||
+            binding.descriptionEt.text.toString().isNotEmpty() ||
             isImageAdded
         ) {
             dialog.show()

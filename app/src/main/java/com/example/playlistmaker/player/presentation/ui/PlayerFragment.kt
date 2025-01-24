@@ -53,15 +53,15 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarPlayer.setNavigationOnClickListener {
+        binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
 
-        binding.playerControl.setOnClickListener {
+        binding.playerControlIv.setOnClickListener {
             viewModel.playbackControl()
         }
 
-        binding.imageView.setOnClickListener {
+        binding.addToFavoriteIv.setOnClickListener {
             viewModel.onFavoriteClicked()
         }
 
@@ -78,11 +78,15 @@ class PlayerFragment : Fragment() {
             }
         }
 
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             viewModel
                 .playerTrackState
                 .collect { state ->
-                    if (state.inProgress) {
+                    if (!state.inProgress && state.showSnackbar) {
                         if (state.isAdded) {
                             playlistmakerSnackbar(
                                 binding.root,
@@ -91,6 +95,7 @@ class PlayerFragment : Fragment() {
                                     state.playlist?.name
                                 )
                             ).show()
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
                         } else {
                             playlistmakerSnackbar(
                                 binding.root,
@@ -100,15 +105,13 @@ class PlayerFragment : Fragment() {
                                 )
                             ).show()
                         }
+
+                        viewModel.clearSnackbar()
                     }
                 }
         }
 
         binding.playlistRvHorizontal.adapter = adapter
-
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.bottomSheetContainer).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
-        }
 
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -123,7 +126,6 @@ class PlayerFragment : Fragment() {
 
         adapter.setOnItemClickListener { item ->
             viewModel.addToPlaylist(item)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         bottomSheetBehavior.addBottomSheetCallback(object :
@@ -131,13 +133,8 @@ class PlayerFragment : Fragment() {
 
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 when (newState) {
-                    BottomSheetBehavior.STATE_HIDDEN -> {
-                        binding.overlay.visibility = View.GONE
-                    }
-
-                    else -> {
-                        binding.overlay.visibility = View.VISIBLE
-                    }
+                    BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
+                    else -> binding.overlay.isVisible = true
                 }
             }
 
@@ -146,7 +143,7 @@ class PlayerFragment : Fragment() {
             }
         })
 
-        binding.addToCollectionImageView.setOnClickListener {
+        binding.addToCollectionIv.setOnClickListener {
             viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
                 viewModel.loadPlaylists()
             }.invokeOnCompletion {
@@ -154,39 +151,39 @@ class PlayerFragment : Fragment() {
             }
         }
 
-        binding.createPlaylistButton.setOnClickListener {
+        binding.createPlaylistBtn.setOnClickListener {
             findNavController().navigate(R.id.newPlaylist)
         }
     }
 
     private fun updateUI(state: PlayerScreenState) {
-        binding.trackTimeProgress.text = millisToStringFormatter(state.progress)
-        binding.playerControl.setImageResource(state.iconRes)
-        binding.imageView.setImageResource(
+        binding.trackTimeProgressTv.text = millisToStringFormatter(state.progress)
+        binding.playerControlIv.setImageResource(state.iconRes)
+        binding.addToFavoriteIv.setImageResource(
             if (state.track.isFavorite) R.drawable.favorite_active else R.drawable.favorite_inactive
         )
     }
 
     private fun initializeFields(track: TrackUI) {
-        Glide.with(binding.coverPlaceholder.context).load(track.artworkUrl512)
+        Glide.with(binding.coverIv.context).load(track.artworkUrl512)
             .placeholder(R.drawable.cover_player_placeholder).centerCrop()
-            .transform(RoundedCorners(dpToPx(8f, binding.coverPlaceholder.context)))
-            .into(binding.coverPlaceholder)
+            .transform(RoundedCorners(dpToPx(8f, binding.coverIv.context)))
+            .into(binding.coverIv)
 
-        binding.trackName.text = track.trackName
-        binding.artistName.text = track.artistName
-        binding.trackTime.text = track.trackTime
+        binding.trackNameTv.text = track.trackName
+        binding.artistNameTv.text = track.artistName
+        binding.trackTimeTv.text = track.trackTime
 
         if (track.collectionName.isEmpty()) {
             setCollectionVisibility(false)
         } else {
             setCollectionVisibility(true)
-            binding.collectionName.text = track.collectionName
+            binding.collectionNameTv.text = track.collectionName
         }
 
-        binding.releaseDate.text = track.releaseDate
-        binding.primaryGenreName.text = track.primaryGenreName
-        binding.country.text = track.country
+        binding.releaseDateTv.text = track.releaseDate
+        binding.primaryGenreNameTv.text = track.primaryGenreName
+        binding.countryTv.text = track.country
     }
 
     private fun setCollectionVisibility(isVisible: Boolean) {

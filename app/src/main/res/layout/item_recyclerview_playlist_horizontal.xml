@@ -9,18 +9,18 @@
     android:paddingVertical="8dp">
 
     <ImageView
-        android:id="@+id/collection_cover_image_view"
+        android:id="@+id/cover_iv"
         android:layout_width="0dp"
         android:layout_height="45dp"
         android:src="@drawable/cover_player_placeholder"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintEnd_toStartOf="@id/collection_name_text_view"
+        app:layout_constraintEnd_toStartOf="@id/collection_name_tv"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/collection_name_text_view"
+        android:id="@+id/collection_name_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -28,16 +28,16 @@
         android:fontFamily="@font/ys_display_regular"
         android:lineHeight="18.75sp"
         android:maxLines="1"
-        tools:text="Название плейлиста"
+        tools:text="[Название плейлиста]"
         android:textColor="@color/default_title"
         android:textFontWeight="400"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/collection_cover_image_view"
+        app:layout_constraintStart_toEndOf="@+id/cover_iv"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/collection_track_count"
+        android:id="@+id/collection_track_count_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
@@ -45,12 +45,12 @@
         android:maxLines="1"
         android:ellipsize="end"
         android:lineHeight="12.89sp"
-        tools:text="10 треков"
+        tools:text="[10 треков]"
         android:textColor="@color/default_title"
         android:textFontWeight="400"
         android:textSize="11sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/collection_cover_image_view"
-        app:layout_constraintTop_toBottomOf="@+id/collection_name_text_view" />
+        app:layout_constraintStart_toEndOf="@+id/cover_iv"
+        app:layout_constraintTop_toBottomOf="@+id/collection_name_tv" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

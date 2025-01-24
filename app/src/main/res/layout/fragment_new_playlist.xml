@@ -16,7 +16,7 @@
         app:title="@string/new_playlist" />
 
     <ImageView
-        android:id="@+id/cover_image_view"
+        android:id="@+id/cover_iv"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="@dimen/margin_24dp"
@@ -37,10 +37,10 @@
         android:layout_marginTop="@dimen/margin_32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cover_image_view">
+        app:layout_constraintTop_toBottomOf="@+id/cover_iv">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/name_edit_text"
+            android:id="@+id/name_et"
             android:layout_width="match_parent"
             android:maxLines="1"
             android:ellipsize="end"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toBottomOf="@+id/name_container">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/description_edit_text"
+            android:id="@+id/description_et"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="1"
@@ -71,7 +71,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_playlist_button"
+        android:id="@+id/create_playlist_btn"
         style="@style/PlaylistMaker.Button.UnelevatedButton.RoundedCorner.NewPlaylist"
         android:text="@string/create"
         app:layout_constraintBottom_toBottomOf="parent"

@@ -54,9 +54,9 @@ class PlaylistAdapter : RecyclerView.Adapter<PlaylistViewHolder>() {
 }
 
 class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val cover: ImageView = itemView.findViewById(R.id.collection_cover_image_view)
-    private val name: TextView = itemView.findViewById(R.id.collection_name_text_view)
-    private val trackCount: TextView = itemView.findViewById(R.id.collection_track_count)
+    private val cover: ImageView = itemView.findViewById(R.id.cover_iv)
+    private val name: TextView = itemView.findViewById(R.id.collection_name_tv)
+    private val trackCount: TextView = itemView.findViewById(R.id.collection_track_count_tv)
 
     fun bind(model: CreatedPlaylist) {
         name.text = model.name

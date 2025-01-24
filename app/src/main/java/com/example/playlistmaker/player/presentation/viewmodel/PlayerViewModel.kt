@@ -81,7 +81,6 @@ class PlayerViewModel(
         _playlistsState.update { it.copy(isLoading = false, list = createdPlaylist) }
     }
 
-
     fun onFavoriteClicked() {
         viewModelScope.launch {
             if (track.isFavorite) {
@@ -96,6 +95,8 @@ class PlayerViewModel(
     }
 
     fun addToPlaylist(item: CreatedPlaylist) {
+        _playerTrackState.update { it.copy(inProgress = true) }
+
         val playlistTrackEntity = track.toPlaylistTrackEntity()
         val playlistAndTrackEntity = PlaylistAndTrackEntity(
             playlistId = item.id, playlistTrackId = track.trackId
@@ -119,12 +120,17 @@ class PlayerViewModel(
 
             _playerTrackState.update {
                 it.copy(
-                    inProgress = true,
+                    inProgress = false,
                     playlist = item,
-                    isAdded = isAdded
+                    isAdded = isAdded,
+                    showSnackbar = true
                 )
             }
         }
+    }
+
+    fun clearSnackbar() {
+        _playerTrackState.update { it.copy(showSnackbar = false) }
     }
 
     fun playbackControl() {

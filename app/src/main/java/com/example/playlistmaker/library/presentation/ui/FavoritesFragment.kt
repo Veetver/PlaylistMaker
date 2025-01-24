@@ -79,20 +79,20 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun showLoading() {
-        binding.placeholderImageView.isVisible = false
-        binding.placeholderTextView.isVisible = false
+        binding.placeholderIv.isVisible = false
+        binding.placeholderTv.isVisible = false
         binding.favoritesRv.isVisible = false
     }
 
     private fun showEmpty() {
-        binding.placeholderImageView.isVisible = true
-        binding.placeholderTextView.isVisible = true
+        binding.placeholderIv.isVisible = true
+        binding.placeholderTv.isVisible = true
         binding.favoritesRv.isVisible = false
     }
 
     private fun showContent() {
-        binding.placeholderImageView.isVisible = false
-        binding.placeholderTextView.isVisible = false
+        binding.placeholderIv.isVisible = false
+        binding.placeholderTv.isVisible = false
         binding.favoritesRv.isVisible = true
     }
 

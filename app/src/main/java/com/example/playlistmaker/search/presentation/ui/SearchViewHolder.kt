@@ -11,10 +11,10 @@ import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.mapper.DpToPxConverter.dpToPx
 
 class SearchViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    private val trackName: TextView = itemView.findViewById(R.id.track_name)
-    private val artistName: TextView = itemView.findViewById(R.id.artist_name)
-    private val trackTime: TextView = itemView.findViewById(R.id.track_time)
-    private val artworkUrl100: ImageView = itemView.findViewById(R.id.artwork)
+    private val trackName: TextView = itemView.findViewById(R.id.track_name_tv)
+    private val artistName: TextView = itemView.findViewById(R.id.artist_name_tv)
+    private val trackTime: TextView = itemView.findViewById(R.id.track_time_tv)
+    private val artworkUrl100: ImageView = itemView.findViewById(R.id.artwork_iv)
 
     fun bind(model: Track) {
         trackName.text = model.trackName

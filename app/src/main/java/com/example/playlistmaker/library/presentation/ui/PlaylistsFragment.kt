@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +36,7 @@ class PlaylistsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.createPlaylistButton.setOnClickListener {
+        binding.createPlaylistBtn.setOnClickListener {
             binding.root
                 .findNavController()
                 .navigate(LibraryFragmentDirections.actionLibraryFragmentToNewPlaylist())
@@ -45,7 +46,12 @@ class PlaylistsFragment : Fragment() {
             viewModel
                 .playlistsScreenState
                 .collect { state ->
-                    adapter.setTrackList(state.list)
+                    if (state.list.isEmpty()) {
+                        showEmpty()
+                    } else {
+                        adapter.setTrackList(state.list)
+                        showPlaylists()
+                    }
                 }
         }
 
@@ -77,6 +83,16 @@ class PlaylistsFragment : Fragment() {
 
         binding.playlistRv.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.playlistRv.adapter = adapter
+    }
+
+    private fun showEmpty() {
+        binding.playlistRv.isVisible = false
+        binding.emptyPlaylistsGroup.isVisible = true
+    }
+
+    private fun showPlaylists() {
+        binding.playlistRv.isVisible = true
+        binding.emptyPlaylistsGroup.isVisible = false
     }
 
     companion object {
