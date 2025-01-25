@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape>
+            <corners android:radius="8dp" />
+            <size
+                android:width="312dp"
+                android:height="312dp" />
+
+            <stroke
+                android:width="1dp"
+                android:color="@color/YP_TEXT_GRAY" />
+        </shape>
+    </item>
+
+    <!-- TOP -->
+    <item
+        android:drawable="@drawable/horizontal_line_stroke_dash"
+        android:start="20dp"
+        android:top="-311dp" />
+
+    <!-- BOTTOM -->
+    <item
+        android:bottom="-311dp"
+        android:drawable="@drawable/horizontal_line_stroke_dash"
+        android:start="20dp" />
+
+    <!-- LEFT -->
+    <item
+        android:drawable="@drawable/vertical_line_stroke_dash"
+        android:left="-311dp"
+        android:top="-10dp" />
+
+    <!-- RIGHT -->
+    <item
+        android:drawable="@drawable/vertical_line_stroke_dash"
+        android:end="-311dp"
+        android:top="-10dp" />
+
+    <item
+        android:width="100dp"
+        android:height="100dp"
+        android:drawable="@drawable/add_photo"
+        android:gravity="center" />
+</layer-list>

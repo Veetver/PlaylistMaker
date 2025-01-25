@@ -11,7 +11,6 @@ import com.example.playlistmaker.search.domain.model.SearchTrackQuery
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.search.presentation.state.SearchScreenState
 import com.example.playlistmaker.util.SingleLiveEvent
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -23,15 +22,14 @@ class SearchViewModel(
     private val tracksInteractor: TracksInteractor,
     private val tracksHistoryInteractor: TrackHistoryInteractor,
     private val favoriteTrackInteractor: FavoriteTrackInteractor,
-    private val gson: Gson,
 ) : ViewModel() {
 
     private val _searchScreenState: MutableLiveData<SearchScreenState> =
         MutableLiveData(SearchScreenState.Default)
     val searchScreenState: LiveData<SearchScreenState> = _searchScreenState
 
-    private val _showTrackTrigger = SingleLiveEvent<String>()
-    val showTrackTrigger: LiveData<String> = _showTrackTrigger
+    private val _showTrackTrigger = SingleLiveEvent<Track>()
+    val showTrackTrigger: LiveData<Track> = _showTrackTrigger
 
     private val lastSearchQuery: MutableLiveData<SearchTrackQuery?> = MutableLiveData()
 
@@ -109,7 +107,7 @@ class SearchViewModel(
                 .isFavorite(track)
                 .collect { track ->
                     tracksHistoryInteractor.addTrack(track)
-                    _showTrackTrigger.postValue(gson.toJson(track))
+                    _showTrackTrigger.postValue(track)
 
                     if (searchScreenState.value is SearchScreenState.HistoryContent) {
                         tracksHistoryInteractor

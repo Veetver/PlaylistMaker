@@ -32,4 +32,6 @@
 
     <color name="libraryTabTextColor">@color/YP_White</color>
     <color name="libraryTabIndicatorColor">@color/YP_White</color>
+
+    <color name="new_playlist_box_stroke_edit_text">@color/YP_White</color>
 </resources>

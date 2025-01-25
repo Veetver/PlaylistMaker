@@ -9,7 +9,6 @@ val searchPresentationModule = module {
         SearchViewModel(
             tracksInteractor = get(),
             tracksHistoryInteractor = get(),
-            gson = get(),
             favoriteTrackInteractor = get(),
         )
     }

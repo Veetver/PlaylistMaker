@@ -8,14 +8,12 @@ import com.example.playlistmaker.player.domain.api.FavoriteTrackInteractor
 import com.example.playlistmaker.search.domain.api.TrackHistoryInteractor
 import com.example.playlistmaker.search.domain.model.Track
 import com.example.playlistmaker.util.SingleLiveEvent
-import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class FavoritesViewModel(
-    private val gson: Gson,
     private val favoriteTrackInteractor: FavoriteTrackInteractor,
     private val tracksHistoryInteractor: TrackHistoryInteractor,
 ) : ViewModel() {
@@ -24,8 +22,8 @@ class FavoritesViewModel(
         MutableStateFlow(FavoritesScreenState.Loading)
     val favoritesScreenState: StateFlow<FavoritesScreenState> = _favoritesScreenState
 
-    private val _showTrackTrigger = SingleLiveEvent<String>()
-    val showTrackTrigger: LiveData<String> = _showTrackTrigger
+    private val _showTrackTrigger = SingleLiveEvent<Track>()
+    val showTrackTrigger: LiveData<Track> = _showTrackTrigger
 
     init {
         updateState()
@@ -54,7 +52,7 @@ class FavoritesViewModel(
                 .isFavorite(track)
                 .collect { track ->
                     tracksHistoryInteractor.addTrack(track)
-                    _showTrackTrigger.postValue(gson.toJson(track))
+                    _showTrackTrigger.postValue(track)
                 }
         }
     }

@@ -11,7 +11,7 @@ import androidx.room.PrimaryKey
 )
 data class TrackHistoryEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Long? = null,
+    val id: Long = 0,
     @ColumnInfo(name = "track_id")
     val trackId: Long,
     @ColumnInfo(name = "name")

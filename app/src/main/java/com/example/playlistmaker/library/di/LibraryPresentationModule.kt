@@ -8,12 +8,14 @@ import org.koin.dsl.module
 val libraryPresentationModule = module {
     viewModel {
         FavoritesViewModel(
-            gson = get(),
             favoriteTrackInteractor = get(),
             tracksHistoryInteractor = get(),
         )
     }
     viewModel {
-        PlaylistsViewModel()
+        PlaylistsViewModel(
+            appDatabase = get(),
+            loadFileUseCase = get(),
+        )
     }
 }
