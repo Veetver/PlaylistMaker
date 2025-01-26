@@ -50,4 +50,6 @@
     <string name="already_added_to_playlist">Трек уже добавлен в плейлист %s</string>
     <string name="create_playlist_success">Плейлист %s создан</string>
     <string name="add_to_playlist_title">Добавить в плейлист</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
