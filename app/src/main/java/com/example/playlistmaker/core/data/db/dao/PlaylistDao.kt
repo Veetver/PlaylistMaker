@@ -34,4 +34,7 @@ interface PlaylistDao {
 
     @Query("SELECT * FROM playlist_and_track INNER JOIN playlist_track ON playlist_and_track.playlist_track_id = playlist_track.track_id WHERE playlist_id = :playlistId")
     fun getPlaylistTracks(playlistId: Long): Flow<List<PlaylistTrackEntity>>
+
+    @Query("SELECT * FROM playlist WHERE id = :playlistId")
+    fun getPlaylist(playlistId: Long): Flow<PlaylistEntity?>
 }

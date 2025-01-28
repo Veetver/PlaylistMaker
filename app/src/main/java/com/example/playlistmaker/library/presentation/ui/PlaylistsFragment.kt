@@ -11,6 +11,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
@@ -82,6 +83,12 @@ class PlaylistsFragment : Fragment() {
         })
 
         binding.playlistRv.layoutManager = GridLayoutManager(requireContext(), 2)
+
+        adapter.setOnItemClickListener { playlist ->
+            val direction = LibraryFragmentDirections.actionLibraryFragmentToPlaylistDetailsFragment(playlist)
+            findNavController().navigate(direction)
+        }
+
         binding.playlistRv.adapter = adapter
     }
 

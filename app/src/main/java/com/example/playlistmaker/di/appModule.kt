@@ -8,6 +8,7 @@ import com.example.playlistmaker.library_new_playlist.di.newPlaylistPresentation
 import com.example.playlistmaker.player.di.playerDataModule
 import com.example.playlistmaker.player.di.playerDomainModule
 import com.example.playlistmaker.player.di.playerPresentationModule
+import com.example.playlistmaker.playlist_details.di.playlistDetailsPresentationModule
 import com.example.playlistmaker.search.di.data.searchDataModule
 import com.example.playlistmaker.search.di.searchDomainModule
 import com.example.playlistmaker.search.di.searchPresentationModule
@@ -26,4 +27,5 @@ val appModule = module {
     includes(shareDataModule, shareDomainModule)
     includes(libraryPresentationModule)
     includes(newPlaylistDataModule, newPlaylistDomainModule, newPlaylistPresentationModule)
+    includes(playlistDetailsPresentationModule)
 }

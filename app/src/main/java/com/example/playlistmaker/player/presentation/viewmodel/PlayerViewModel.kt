@@ -71,11 +71,11 @@ class PlayerViewModel(
 
         val createdPlaylist = list.map { item ->
             CreatedPlaylist(
-                item.id,
-                item.name,
-                appDatabase.playlistDao().getTrackCount(item.id).firstOrNull() ?: 0,
-                loadFileUseCase(item.coverName.toString()).firstOrNull(),
-                R.layout.item_recyclerview_playlist_horizontal
+                id = item.id,
+                name = item.name,
+                trackCount = appDatabase.playlistDao().getTrackCount(item.id).firstOrNull() ?: 0,
+                cover = loadFileUseCase(item.coverName.toString()).firstOrNull(),
+                layout = R.layout.item_recyclerview_playlist_horizontal
             )
         }
         _playlistsState.update { it.copy(isLoading = false, list = createdPlaylist) }

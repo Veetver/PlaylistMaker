@@ -2,15 +2,17 @@ package com.example.playlistmaker.player.presentation.mapper
 
 import com.example.playlistmaker.player.presentation.model.TrackUI
 import com.example.playlistmaker.search.domain.model.Track
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 object TrackMapper {
     fun toTrackUI(track: Track): TrackUI {
         return TrackUI(
             trackName = track.trackName ?: "N/A",
             artistName = track.artistName ?: "N/A",
-            trackTime = track.trackTime ?: "N/A",
+            trackTime = SimpleDateFormat("mm:ss", Locale.getDefault()).format(track.trackTime) ?: "N/A",
             artworkUrl512 = track.artworkUrl100?.replaceAfterLast('/', "512x512bb.jpg") ?: "",
             collectionName = track.collectionName ?: "",
             releaseDate = if (!track.releaseDate.isNullOrEmpty())

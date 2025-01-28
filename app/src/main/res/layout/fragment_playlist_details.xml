@@ -6,14 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".playlist_details.presentation.ui.PlaylistDetailsFragment">
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/playlist_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:background="#E6E8EB">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             style="@style/PlaylistMakerToolbarStyle"
+            android:elevation="1dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -135,11 +139,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/bottom_sheet_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/bottoms_sheet_bg"
         app:behavior_hideable="false"
-        app:behavior_peekHeight="264dp"
+        app:behavior_peekHeight="100dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <ImageView
@@ -165,4 +170,5 @@
             tools:listitem="@layout/item_recyclerview_search_activity" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
