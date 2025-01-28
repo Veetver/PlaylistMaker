@@ -11,6 +11,7 @@ class TrackListAdapter() :
 
     private var trackList: List<Track> = emptyList()
     private var onItemClickListener: (Track) -> Unit = { }
+    private var onItemLongClickListener: (Track) -> Boolean = { false }
 
     fun setTrackList(list: List<Track>) {
         trackList = list
@@ -19,6 +20,10 @@ class TrackListAdapter() :
 
     fun setOnItemClickListener(onItemClickListener: (Track) -> Unit) {
         this.onItemClickListener = onItemClickListener
+    }
+
+    fun setOnItemLongClickListener(onItemLongClickListener: (Track) -> Boolean) {
+        this.onItemLongClickListener = onItemLongClickListener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SearchViewHolder(
@@ -31,6 +36,10 @@ class TrackListAdapter() :
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             onItemClickListener(trackList[position])
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClickListener(trackList[position])
         }
     }
 

@@ -245,6 +245,7 @@
     <style name="PlaylistMaker.MaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/materialAlertButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/materialAlertButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/materialAlertButtonStyle</item>
     </style>
 
     <style name="materialAlertButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">

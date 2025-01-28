@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import com.example.playlistmaker.core.data.db.entity.PlaylistAndTrackEntity
 import com.example.playlistmaker.core.data.db.entity.PlaylistEntity
 import com.example.playlistmaker.core.data.db.entity.PlaylistTrackEntity
@@ -37,4 +38,16 @@ interface PlaylistDao {
 
     @Query("SELECT * FROM playlist WHERE id = :playlistId")
     fun getPlaylist(playlistId: Long): Flow<PlaylistEntity?>
+
+    @Query("DELETE FROM playlist_and_track WHERE playlist_id =:playlistId AND playlist_track_id =:trackId")
+    fun removeTrackFromPlaylist(playlistId: Long, trackId: Long)
+
+    @Query("DELETE FROM playlist_track WHERE track_id NOT IN (SELECT playlist_track_id FROM playlist_and_track)")
+    fun removeRedundantPlaylistTracks()
+
+    @Transaction
+    fun removeTrackFromPlaylistAndClear(playlistId: Long, trackId: Long) {
+        removeTrackFromPlaylist(playlistId, trackId)
+        removeRedundantPlaylistTracks()
+    }
 }

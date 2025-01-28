@@ -20,8 +20,10 @@ import com.example.playlistmaker.core.data.mappers.PlaylistDetailsMapper.toPlayl
 import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.example.playlistmaker.playlist_details.presentation.model.PlaylistDetailsUI
 import com.example.playlistmaker.playlist_details.presentation.viewmodel.PlaylistDetailsViewModel
+import com.example.playlistmaker.search.presentation.ui.TrackListAdapter
 import com.example.playlistmaker.util.mapper.DpToPxConverter.dpToPx
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -36,6 +38,8 @@ class PlaylistDetailsFragment : Fragment() {
     private val viewModel: PlaylistDetailsViewModel by viewModel {
         parametersOf(args.playlist)
     }
+
+    private val adapter = TrackListAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
@@ -52,6 +56,7 @@ class PlaylistDetailsFragment : Fragment() {
                 viewModel.playlistsDetailsScreenState.collect { state ->
                     if (!state.isLoading && state.playlist != null) {
                         render(state.playlist.toPlaylistDetailsUI())
+                        adapter.setTrackList(state.playlist.trackList)
                     }
                 }
             }
@@ -61,6 +66,33 @@ class PlaylistDetailsFragment : Fragment() {
 
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
+        }
+
+        adapter.setOnItemClickListener { track ->
+            val direction =
+                PlaylistDetailsFragmentDirections
+                    .actionPlaylistDetailsFragmentToPlayerFragment(track)
+            findNavController().navigate(direction)
+        }
+
+        val confirmDialog =
+            MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.remove_track_warning))
+                .setMessage(getString(R.string.remove_track_warning_body))
+                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+
+        adapter.setOnItemLongClickListener { track ->
+            confirmDialog
+                .setPositiveButton(getString(R.string.remove)) { _, _ ->
+                    viewModel.removeTrackFromPlaylist(track)
+                }
+                .show()
+            true
+        }
+
+        binding.trackListRv.adapter = adapter
+
+        binding.shareIv.setOnClickListener {
+            // TODO: STEP 4
         }
     }
 
@@ -76,8 +108,7 @@ class PlaylistDetailsFragment : Fragment() {
                 val height = displayMetrics.heightPixels
 
                 var peekHeight = height - binding.shareIv.y - binding.shareIv.height - dpToPx(
-                    24f,
-                    requireContext()
+                    24f, requireContext()
                 )
 
                 if (args.playlist.description.isNullOrEmpty()) {
@@ -104,10 +135,13 @@ class PlaylistDetailsFragment : Fragment() {
             R.plurals.minutes, playlist.totalTrackTime, playlist.totalTrackTime
         )
 
-        Glide.with(binding.coverIv).load(playlist.cover)
-            .placeholder(R.drawable.cover_player_placeholder).transform(
-                CenterCrop()
-            ).into(binding.coverIv)
+        playlist.cover?.let {
+            Glide.with(binding.coverIv).load(playlist.cover)
+                .error(R.drawable.cover_player_placeholder)
+                .placeholder(R.drawable.cover_player_placeholder).transform(
+                    CenterCrop()
+                ).into(binding.coverIv)
+        }
     }
 
     override fun onDestroyView() {

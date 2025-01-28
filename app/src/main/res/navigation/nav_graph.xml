@@ -57,5 +57,8 @@
         <argument
             android:name="playlist"
             app:argType="com.example.playlistmaker.library.presentation.model.CreatedPlaylist" />
+        <action
+            android:id="@+id/action_playlistDetailsFragment_to_playerFragment"
+            app:destination="@id/playerFragment" />
     </fragment>
 </navigation>
