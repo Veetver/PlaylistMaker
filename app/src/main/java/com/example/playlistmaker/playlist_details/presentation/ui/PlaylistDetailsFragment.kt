@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.core.data.mappers.PlaylistDetailsMapper.toPlaylistDetailsUI
 import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
@@ -92,7 +93,48 @@ class PlaylistDetailsFragment : Fragment() {
         binding.trackListRv.adapter = adapter
 
         binding.shareIv.setOnClickListener {
-            // TODO: STEP 4
+            viewModel.sharePlaylist()
+        }
+
+        binding.shareTv.setOnClickListener {
+            viewModel.sharePlaylist()
+        }
+
+        val bottomSheetMenu = BottomSheetBehavior.from(binding.bottomSheetMenuContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+        bottomSheetMenu.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> binding.overlay.isVisible = false
+                    else -> binding.overlay.isVisible = true
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                binding.overlay.alpha = (slideOffset + 1) / 2
+            }
+        })
+
+        binding.menuIv.setOnClickListener {
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_COLLAPSED
+        }
+
+        val removePlaylistDialog =
+            MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.remove_playlist_warning))
+                .setMessage(getString(R.string.remove_playlist_warning_body))
+                .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.cancel() }
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
+                    viewModel.removePlaylist()
+                    findNavController().navigateUp()
+                }
+
+        binding.deletePlaylistTv.setOnClickListener {
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
+            removePlaylistDialog.show()
         }
     }
 
@@ -101,7 +143,7 @@ class PlaylistDetailsFragment : Fragment() {
             ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 binding.shareIv.viewTreeObserver.removeOnGlobalLayoutListener(this)
-                val behavior = BottomSheetBehavior.from(binding.bottomSheetContainer);
+                val behavior = BottomSheetBehavior.from(binding.bottomSheetContainer)
 
                 val displayMetrics = DisplayMetrics()
                 requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
@@ -122,25 +164,40 @@ class PlaylistDetailsFragment : Fragment() {
 
     private fun render(playlist: PlaylistDetailsUI) {
         binding.nameTv.text = playlist.name
+        binding.collectionNameMenuTv.text = playlist.name
+
         if (playlist.description.isNullOrEmpty()) {
             binding.descriptionTv.isVisible = false
         } else {
             binding.descriptionTv.isVisible = true
             binding.descriptionTv.text = playlist.description
         }
-        binding.collectionTrackCountTv.text = binding.root.context.resources.getQuantityString(
+
+        val playlistTracksCount = requireContext().resources.getQuantityString(
             R.plurals.tracks, playlist.trackCount, playlist.trackCount
         )
-        binding.totalTrackTimeTv.text = binding.root.context.resources.getQuantityString(
+        binding.collectionTrackCountTv.text = playlistTracksCount
+        binding.collectionTrackCountMenuTv.text = playlistTracksCount
+
+        binding.totalTrackTimeTv.text = requireContext().resources.getQuantityString(
             R.plurals.minutes, playlist.totalTrackTime, playlist.totalTrackTime
         )
 
         playlist.cover?.let {
-            Glide.with(binding.coverIv).load(playlist.cover)
+            val glide = Glide.with(binding.coverIv).load(playlist.cover)
                 .error(R.drawable.cover_player_placeholder)
-                .placeholder(R.drawable.cover_player_placeholder).transform(
+                .placeholder(R.drawable.cover_player_placeholder)
+                .transform(
                     CenterCrop()
-                ).into(binding.coverIv)
+                )
+
+            glide.into(binding.coverIv)
+            glide
+                .transform(
+                    CenterCrop(),
+                    RoundedCorners(dpToPx(2f, requireContext())),
+                )
+                .into(binding.coverMenuIv)
         }
     }
 

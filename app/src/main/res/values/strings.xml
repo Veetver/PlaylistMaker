@@ -63,4 +63,11 @@
     <string name="remove_track_warning">Удалить трек?</string>
     <string name="remove_track_warning_body">Вы уверены, что хотите удалить трек из плейлиста?</string>
     <string name="remove">Удалить</string>
+    <string name="share_title">Поделиться</string>
+    <string name="edit_playlist_title">Редактировать информацию</string>
+    <string name="delete_playlist_title">Удалить плейлист</string>
+    <string name="remove_playlist_warning">Удалить плейлист</string>
+    <string name="remove_playlist_warning_body">Хотите удалить плейлист?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
 </resources>

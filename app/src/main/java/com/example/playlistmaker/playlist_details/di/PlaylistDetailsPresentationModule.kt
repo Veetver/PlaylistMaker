@@ -10,6 +10,8 @@ val playlistDetailsPresentationModule = module {
         PlaylistDetailsViewModel(
             playlist = playlist,
             appDatabase = get(),
+            sharePlaylistUseCase = get(),
+            getPluralStringFromIdUseCase = get(),
         )
     }
 }

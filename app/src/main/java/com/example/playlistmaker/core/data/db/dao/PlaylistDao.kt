@@ -50,4 +50,17 @@ interface PlaylistDao {
         removeTrackFromPlaylist(playlistId, trackId)
         removeRedundantPlaylistTracks()
     }
+
+    @Query("DELETE FROM playlist WHERE id =:playlistId")
+    suspend fun removePlaylist(playlistId: Long)
+
+    @Query("DELETE FROM playlist_and_track WHERE playlist_id =:playlistId")
+    suspend fun removePlaylistAndTrack(playlistId: Long)
+
+    @Transaction
+    suspend fun removePlaylistAndClear(playlistId: Long) {
+        removePlaylist(playlistId)
+        removePlaylistAndTrack(playlistId)
+        removeRedundantPlaylistTracks()
+    }
 }
