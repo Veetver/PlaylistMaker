@@ -70,4 +70,6 @@
     <string name="remove_playlist_warning_body">Хотите удалить плейлист?</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="share_no_tracks">В этом плейлисте нет списка треков, которым можно поделиться</string>
+    <string name="playlist_no_tracks">В плейлисте нет треков</string>
 </resources>

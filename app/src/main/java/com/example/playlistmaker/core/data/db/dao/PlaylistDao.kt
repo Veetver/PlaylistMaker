@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface PlaylistDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(track: PlaylistEntity)
+    suspend fun upsert(track: PlaylistEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addToPlaylist(playlistAndTrackEntity: PlaylistAndTrackEntity)

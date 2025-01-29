@@ -18,6 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.core.data.mappers.PlaylistDetailsMapper.toPlaylistDetailsUI
+import com.example.playlistmaker.core.presentation.ui.utils.playlistmakerSnackbar
 import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
 import com.example.playlistmaker.playlist_details.presentation.model.PlaylistDetailsUI
 import com.example.playlistmaker.playlist_details.presentation.viewmodel.PlaylistDetailsViewModel
@@ -37,7 +38,7 @@ class PlaylistDetailsFragment : Fragment() {
 
     private val args: PlaylistDetailsFragmentArgs by navArgs()
     private val viewModel: PlaylistDetailsViewModel by viewModel {
-        parametersOf(args.playlist)
+        parametersOf(args.playlistId)
     }
 
     private val adapter = TrackListAdapter()
@@ -50,20 +51,38 @@ class PlaylistDetailsFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.playlistsDetailsScreenState.collect { state ->
-                    if (!state.isLoading && state.playlist != null) {
-                        render(state.playlist.toPlaylistDetailsUI())
-                        adapter.setTrackList(state.playlist.trackList)
+                viewModel.loadPlaylist()
+
+                viewModel
+                    .playlistsDetailsScreenState
+                    .collect { state ->
+                        if (!state.isLoading && state.playlist != null) {
+                            updateBottomSheetPeekHeight()
+                            render(state.playlist.toPlaylistDetailsUI())
+                            adapter.setTrackList(state.playlist.trackList)
+
+                            if (state.playlist.trackCount == 0) {
+                                playlistmakerSnackbar(binding.root, requireContext().resources.getString(R.string.playlist_no_tracks)).show()
+                            }
+                        }
                     }
-                }
             }
         }
 
-        updateBottomSheetPeekHeight()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel
+                    .isNeedShowSnackbar
+                    .collect { snackbar ->
+                        if (snackbar.isNeedShow) {
+                            playlistmakerSnackbar(binding.root, snackbar.text).show()
+                            viewModel.clearSnackbar()
+                        }
+                    }
+            }
+        }
 
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
@@ -92,16 +111,17 @@ class PlaylistDetailsFragment : Fragment() {
 
         binding.trackListRv.adapter = adapter
 
+        val bottomSheetMenu = BottomSheetBehavior.from(binding.bottomSheetMenuContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
         binding.shareIv.setOnClickListener {
             viewModel.sharePlaylist()
         }
 
         binding.shareTv.setOnClickListener {
+            bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
             viewModel.sharePlaylist()
-        }
-
-        val bottomSheetMenu = BottomSheetBehavior.from(binding.bottomSheetMenuContainer).apply {
-            state = BottomSheetBehavior.STATE_HIDDEN
         }
 
         bottomSheetMenu.addBottomSheetCallback(object :
@@ -136,6 +156,12 @@ class PlaylistDetailsFragment : Fragment() {
             bottomSheetMenu.state = BottomSheetBehavior.STATE_HIDDEN
             removePlaylistDialog.show()
         }
+
+        binding.editPlaylistTv.setOnClickListener {
+            val direction =
+                PlaylistDetailsFragmentDirections.actionPlaylistDetailsFragmentToNewPlaylist(args.playlistId)
+            findNavController().navigate(direction)
+        }
     }
 
     private fun updateBottomSheetPeekHeight() {
@@ -149,14 +175,8 @@ class PlaylistDetailsFragment : Fragment() {
                 requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
                 val height = displayMetrics.heightPixels
 
-                var peekHeight = height - binding.shareIv.y - binding.shareIv.height - dpToPx(
-                    24f, requireContext()
-                )
-
-                if (args.playlist.description.isNullOrEmpty()) {
-                    peekHeight += binding.descriptionTv.height
-                }
-
+                val peekHeight =
+                    height - binding.shareIv.y - binding.shareIv.height - dpToPx(24f, requireContext())
                 behavior.peekHeight = peekHeight.toInt()
             }
         })
@@ -183,21 +203,28 @@ class PlaylistDetailsFragment : Fragment() {
             R.plurals.minutes, playlist.totalTrackTime, playlist.totalTrackTime
         )
 
-        playlist.cover?.let {
-            val glide = Glide.with(binding.coverIv).load(playlist.cover)
+        if (playlist.cover != null) {
+            Glide.with(binding.coverIv)
+                .load(playlist.cover)
                 .error(R.drawable.cover_player_placeholder)
                 .placeholder(R.drawable.cover_player_placeholder)
                 .transform(
                     CenterCrop()
                 )
+                .into(binding.coverIv)
 
-            glide.into(binding.coverIv)
-            glide
+            Glide.with(binding.coverMenuIv)
+                .load(playlist.cover)
+                .error(R.drawable.cover_player_placeholder)
+                .placeholder(R.drawable.cover_player_placeholder)
                 .transform(
                     CenterCrop(),
                     RoundedCorners(dpToPx(2f, requireContext())),
                 )
                 .into(binding.coverMenuIv)
+        } else {
+            binding.coverIv.setImageResource(R.drawable.cover_player_placeholder)
+            binding.coverMenuIv.setImageResource(R.drawable.cover_player_placeholder)
         }
     }
 

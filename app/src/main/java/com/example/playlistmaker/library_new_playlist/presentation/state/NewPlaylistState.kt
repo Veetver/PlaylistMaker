@@ -7,6 +7,7 @@ data class NewPlaylistState(
 )
 
 data class NewPlaylistDetails(
+    val id: Long = 0,
     val name: String = "",
     val description: String = "",
     val uri: Uri = Uri.EMPTY

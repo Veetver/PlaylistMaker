@@ -85,7 +85,7 @@ class PlaylistsFragment : Fragment() {
         binding.playlistRv.layoutManager = GridLayoutManager(requireContext(), 2)
 
         adapter.setOnItemClickListener { playlist ->
-            val direction = LibraryFragmentDirections.actionLibraryFragmentToPlaylistDetailsFragment(playlist)
+            val direction = LibraryFragmentDirections.actionLibraryFragmentToPlaylistDetailsFragment(playlist.id)
             findNavController().navigate(direction)
         }
 

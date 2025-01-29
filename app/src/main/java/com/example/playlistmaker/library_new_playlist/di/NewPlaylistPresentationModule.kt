@@ -9,6 +9,7 @@ val newPlaylistPresentationModule = module {
         NewPlaylistViewModel(
             saveFileUseCase = get(),
             appDatabase = get(),
+            loadFileUseCase = get(),
         )
     }
 }

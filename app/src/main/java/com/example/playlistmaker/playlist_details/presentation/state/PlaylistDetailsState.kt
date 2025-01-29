@@ -9,9 +9,9 @@ data class PlaylistDetailsState(
 )
 
 data class PlaylistDetails(
-    val name: String,
-    val trackCount: Int,
-    val cover: File?,
+    val name: String = "",
+    val trackCount: Int = 0,
+    val cover: File? = null,
     val description: String? = "",
-    val trackList: List<Track>,
+    val trackList: List<Track> = emptyList(),
 )
