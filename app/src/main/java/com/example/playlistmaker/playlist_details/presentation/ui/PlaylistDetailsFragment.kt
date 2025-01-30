@@ -98,11 +98,11 @@ class PlaylistDetailsFragment : Fragment() {
         val confirmDialog =
             MaterialAlertDialogBuilder(requireContext()).setTitle(getString(R.string.remove_track_warning))
                 .setMessage(getString(R.string.remove_track_warning_body))
-                .setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+                .setNegativeButton(getString(R.string.no)) { dialog, _ -> dialog.cancel() }
 
         adapter.setOnItemLongClickListener { track ->
             confirmDialog
-                .setPositiveButton(getString(R.string.remove)) { _, _ ->
+                .setPositiveButton(getString(R.string.yes)) { _, _ ->
                     viewModel.removeTrackFromPlaylist(track)
                 }
                 .show()

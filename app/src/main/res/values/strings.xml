@@ -60,8 +60,8 @@
     <string name="add_to_playlist_title">Добавить в плейлист</string>
     <string name="negative">Нет</string>
     <string name="positive">Да</string>
-    <string name="remove_track_warning">Удалить трек?</string>
-    <string name="remove_track_warning_body">Вы уверены, что хотите удалить трек из плейлиста?</string>
+    <string name="remove_track_warning">Удалить трек</string>
+    <string name="remove_track_warning_body">Хотите удалить трек?</string>
     <string name="remove">Удалить</string>
     <string name="share_title">Поделиться</string>
     <string name="edit_playlist_title">Редактировать информацию</string>
