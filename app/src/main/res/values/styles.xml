@@ -121,6 +121,21 @@
         <item name="tint">@color/default_title</item>
     </style>
 
+    <!-- -->
+    <style name="PlaylistMakerToolbarStyle.PlaylistDetails" parent="PlaylistMakerToolbarStyle">
+        <item name="android:theme">@style/PlaylistMakerToolbarTheme.PlaylistDetails</item>
+    </style>
+
+    <style name="PlaylistMakerToolbarTheme.PlaylistDetails" parent="PlaylistMakerToolbarTheme" >
+        <item name="toolbarNavigationButtonStyle">@style/PlaylistMakerToolbarNavigationButtonStyle.PlaylistDetails
+        </item>
+    </style>
+
+    <style name="PlaylistMakerToolbarNavigationButtonStyle.PlaylistDetails" parent="PlaylistMakerToolbarNavigationButtonStyle">
+        <item name="tint">@color/YP_Black</item>
+    </style>
+    <!-- -->
+
 
     <style name="PlaylistMakerRecyclerItemTrackName">
         <item name="android:textColor">@color/search_item_track_name</item>
@@ -245,6 +260,7 @@
     <style name="PlaylistMaker.MaterialAlertDialog" parent="@style/ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="buttonBarPositiveButtonStyle">@style/materialAlertButtonStyle</item>
         <item name="buttonBarNeutralButtonStyle">@style/materialAlertButtonStyle</item>
+        <item name="buttonBarNegativeButtonStyle">@style/materialAlertButtonStyle</item>
     </style>
 
     <style name="materialAlertButtonStyle" parent="@style/Widget.MaterialComponents.Button.TextButton.Dialog">

@@ -22,7 +22,7 @@ fun playlistmakerSnackbar(view: View, text: String): Snackbar {
 
     snackbar.view.findViewById<TextView>(com.google.android.material.R.id.snackbar_text).apply {
         ellipsize = TextUtils.TruncateAt.MIDDLE
-        maxLines = 1
+        maxLines = 2
         textAlignment = View.TEXT_ALIGNMENT_CENTER
     }
     return snackbar

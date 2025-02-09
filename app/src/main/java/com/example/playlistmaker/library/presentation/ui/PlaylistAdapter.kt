@@ -67,8 +67,8 @@ class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 model.trackCount
             )
 
-        model.cover?.let {
-            Glide.with(itemView.context)
+        if (model.cover != null) {
+            Glide.with(itemView)
                 .load(model.cover)
                 .error(R.drawable.cover_player_placeholder)
                 .placeholder(R.drawable.cover_player_placeholder)
@@ -76,6 +76,8 @@ class PlaylistViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     CenterCrop(),
                     RoundedCorners(dpToPx(8f, itemView.context))
                 ).into(cover)
+        } else {
+            cover.setImageResource(R.drawable.cover_player_placeholder)
         }
     }
 }

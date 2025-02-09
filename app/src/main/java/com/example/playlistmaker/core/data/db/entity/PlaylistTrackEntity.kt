@@ -16,7 +16,7 @@ data class PlaylistTrackEntity(
     @ColumnInfo(name = "artist_name")
     val artistName: String?,
     @ColumnInfo(name = "time")
-    val trackTime: String?,
+    val trackTime: Long?,
     @ColumnInfo(name = "artwork_url_100")
     val artworkUrl100: String?,
     @ColumnInfo(name = "collection_name")

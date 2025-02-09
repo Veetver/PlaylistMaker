@@ -43,7 +43,8 @@ class ExternalPrivateStorage(
     override suspend fun loadFile(filename: String): Flow<File> = flow {
         val filePath =
             File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), "playlist_cover")
-        if (filePath.exists()) {
+
+        if (filePath.exists() && filename.isNotEmpty()) {
             val file = File(filePath, filename)
             emit(file)
         }

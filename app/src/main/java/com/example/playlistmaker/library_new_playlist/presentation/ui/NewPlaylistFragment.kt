@@ -15,12 +15,14 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.core.presentation.ui.utils.playlistmakerSnackbar
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.example.playlistmaker.library_new_playlist.presentation.state.NewPlaylistState
 import com.example.playlistmaker.library_new_playlist.presentation.viewmodel.NewPlaylistViewModel
 import com.example.playlistmaker.util.mapper.DpToPxConverter.dpToPx
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -34,6 +36,7 @@ class NewPlaylistFragment : Fragment() {
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding get() = _binding!!
+    private val args: NewPlaylistFragmentArgs by navArgs()
 
     private var isImageAdded: Boolean = false
 
@@ -46,6 +49,13 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        if (args.playlistId != -1L) {
+            viewModel.setPlaylist(args.playlistId)
+
+            binding.toolbar.title = "Редактировать"
+            binding.createPlaylistBtn.text = "Сохранить"
+        }
 
         val confirmDialog = MaterialAlertDialogBuilder(requireContext())
             .setTitle(getString(R.string.new_playlist_exit_warning))
@@ -68,14 +78,18 @@ class NewPlaylistFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.newPlaylistScreenState.collect { state ->
                     if (state.isCreated) {
-                        playlistmakerSnackbar(
-                            binding.root,
-                            requireContext().getString(
-                                R.string.create_playlist_success,
-                                state.details.name
-                            )
-                        ).show()
+                        if (args.playlistId == -1L) {
+                            playlistmakerSnackbar(
+                                binding.root,
+                                requireContext().getString(
+                                    R.string.create_playlist_success,
+                                    state.details.name
+                                )
+                            ).show()
+                        }
                         findNavController().navigateUp()
+                    } else {
+                        renderUI(state)
                     }
                 }
             }
@@ -89,7 +103,6 @@ class NewPlaylistFragment : Fragment() {
         val pickMedia =
             registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
                 if (uri != null) {
-                    showImage(binding.coverIv, uri)
                     viewModel.setCover(uri)
                 }
             }
@@ -99,7 +112,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
         binding.createPlaylistBtn.setOnClickListener {
-            viewModel.createPlaylist()
+            viewModel.upsertPlaylist()
         }
 
         requireActivity()
@@ -109,11 +122,21 @@ class NewPlaylistFragment : Fragment() {
             }
     }
 
+    private fun renderUI(state: NewPlaylistState) {
+        if (binding.nameEt.text.toString() != state.details.name) {
+            binding.nameEt.setText(state.details.name)
+        }
+        if (binding.descriptionEt.text.toString() != state.details.description) {
+            binding.descriptionEt.setText(state.details.description)
+        }
+        showImage(binding.coverIv, state.details.uri)
+    }
+
     private fun navigateUp(dialog: MaterialAlertDialogBuilder) {
         if (
-            binding.nameEt.text.toString().isNotEmpty() ||
+            (binding.nameEt.text.toString().isNotEmpty() ||
             binding.descriptionEt.text.toString().isNotEmpty() ||
-            isImageAdded
+            isImageAdded) && args.playlistId == -1L
         ) {
             dialog.show()
         } else {

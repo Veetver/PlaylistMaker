@@ -54,6 +54,7 @@ class PlaylistsViewModel(
                 CreatedPlaylist(
                     item.id,
                     item.name,
+                    item.description,
                     appDatabase.playlistDao().getTrackCount(item.id)
                         .firstOrNull() ?: 0,
                     loadFileUseCase(item.coverName.toString()).firstOrNull(),
