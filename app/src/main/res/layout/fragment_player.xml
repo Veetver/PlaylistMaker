@@ -81,12 +81,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@id/player_control_iv" />
 
-            <ImageView
+            <com.example.playlistmaker.core.customview.PlaybackButtonView
                 android:id="@+id/player_control_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:src="@drawable/play"
+                app:playIconDrawable="@drawable/play"
+                app:pauseIconDrawable="@drawable/pause"
                 app:layout_constraintBottom_toTopOf="@id/track_time_progress_tv"
                 app:layout_constraintEnd_toStartOf="@id/add_to_favorite_iv"
                 app:layout_constraintStart_toEndOf="@id/add_to_collection_iv" />
@@ -330,6 +331,7 @@
             android:layout_height="match_parent"
             android:background="@drawable/bottoms_sheet_bg"
             app:behavior_hideable="true"
+            android:visibility="gone"
             app:behavior_peekHeight="504dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 

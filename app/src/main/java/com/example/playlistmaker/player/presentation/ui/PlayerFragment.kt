@@ -14,6 +14,7 @@ import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
+import com.example.playlistmaker.core.customview.PlaybackButtonState
 import com.example.playlistmaker.core.presentation.ui.utils.playlistmakerSnackbar
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.presentation.ui.PlaylistAdapter
@@ -57,7 +58,7 @@ class PlayerFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        binding.playerControlIv.setOnClickListener {
+        binding.playerControlIv.setOnActionUpEventListener {
             viewModel.playbackControl()
         }
 
@@ -157,8 +158,22 @@ class PlayerFragment : Fragment() {
     }
 
     private fun updateUI(state: PlayerScreenState) {
+        binding.playerControlIv.isEnabled = false
+        when (state) {
+            is PlayerScreenState.Initializing -> {
+            }
+            is PlayerScreenState.Waiting -> {
+                binding.playerControlIv.setState(PlaybackButtonState.STATE_PAUSED)
+            }
+
+            is PlayerScreenState.Playing -> {
+                binding.playerControlIv.setState(PlaybackButtonState.STATE_PLAYING)
+            }
+        }
+
+        binding.playerControlIv.togglePlayback()
+
         binding.trackTimeProgressTv.text = millisToStringFormatter(state.progress)
-        binding.playerControlIv.setImageResource(state.iconRes)
         binding.addToFavoriteIv.setImageResource(
             if (state.track.isFavorite) R.drawable.favorite_active else R.drawable.favorite_inactive
         )

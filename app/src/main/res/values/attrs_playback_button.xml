@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PlaybackButtonView">
+        <attr name="playIconDrawable" format="reference" />
+        <attr name="pauseIconDrawable" format="reference" />
+    </declare-styleable>
+</resources>
